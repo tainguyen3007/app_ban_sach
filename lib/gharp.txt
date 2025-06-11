@@ -1,21 +1,9 @@
 lib/
-├── main.dart
-├── core/               # Các thành phần dùng chung
-│   ├── constants/      # Giá trị hằng số: colors, sizes, strings,...
-│   ├── utils/          # Hàm tiện ích
-│   └── themes/         # Theme chung (dark/light theme, text styles,...)
-├── data/               # Dữ liệu: model, API, repo
-│   ├── models/         
-│   ├── services/       # Gọi API hoặc local storage
-│   └── repositories/   # Logic kết nối data & UI (nếu dùng)
-├── features/           # Theo chức năng (recommended)
-│   ├── auth/           
-│   │   ├── screens/
-│   │   ├── widgets/
-│   │   ├── controllers/  # Bloc, Cubit, Provider,...
-│   │   └── models/
-│   ├── home/
-│   └── profile/
-├── routes/             # Điều hướng (GoRouter, Navigator,...)
-├── widgets/            # Các widget dùng chung nhiều nơi
-└── l10n/               # Đa ngôn ngữ (nếu có)
+├── models/           # Tất cả model
+├── screens/          # Tất cả màn hình
+├── widgets/          # Widget dùng chung
+├── services/         # API / local services
+├── controllers/      # State manager (Bloc, Provider,...)
+├── utils/            # Tiện ích dùng chung
+├── constants/        # Màu, text, padding,...
+└── main.dart
