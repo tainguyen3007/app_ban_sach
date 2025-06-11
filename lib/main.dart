@@ -12,11 +12,8 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
       home: Scaffold(
         body: Center(
-<<<<<<< HEAD
-          child: Text('Hello World Tai'),
-=======
-          child: Text('Main App'),
->>>>>>> main
+          child: Text('Đây là nhánh tài'),
+
         ),
       ),
     );
