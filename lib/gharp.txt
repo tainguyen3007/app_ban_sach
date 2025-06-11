@@ -1,0 +1,9 @@
+lib/
+├── models/           # Tất cả model
+├── screens/          # Tất cả màn hình
+├── widgets/          # Widget dùng chung
+├── services/         # API / local services
+├── controllers/      # State manager (Bloc, Provider,...)
+├── utils/            # Tiện ích dùng chung
+├── constants/        # Màu, text, padding,...
+└── main.dart
