@@ -1,9 +1,24 @@
 lib/
-├── models/           # Tất cả model
-├── screens/          # Tất cả màn hình
-├── widgets/          # Widget dùng chung
-├── services/         # API / local services
-├── controllers/      # State manager (Bloc, Provider,...)
-├── utils/            # Tiện ích dùng chung
-├── constants/        # Màu, text, padding,...
-└── main.dart
+│
+├── main.dart                     # Điểm bắt đầu của ứng dụng
+│
+├── core/                         # Các thành phần dùng chung toàn app
+│   ├── constants/               # Giá trị cố định: colors, text size, padding...
+│   ├── utils/                   # Các hàm tiện ích (helper)
+│   └── themes/                  # Chủ đề light/dark theme, font, style
+│
+├── data/                         # Quản lý dữ liệu
+│   ├── models/                  # Định nghĩa model class (User, Product...)
+│   ├── repositories/            # Tầng trung gian gọi API hoặc DB
+│   └── datasources/            # API services, local DB, firebase...
+│
+├── features/                     # Chức năng theo từng màn hình/flow
+│       ├── ui/        # Giao diện (UI)
+│       │   ├── screens/         # Màn hình chính (HomeScreen, DetailScreen...)
+│       │   └── widgets/         # Các widget nhỏ tái sử dụng trong màn hình đó
+│       ├── application/         # Logic xử lý tương tác UI (state, controller)
+│       └── domain/              # Khai báo model riêng, use cases nếu cần
+│
+├── routes/                      # Định nghĩa đường dẫn điều hướng (AppRouter)
+│
+└── config/                      # Cấu hình môi trường, DI, global settings...
