@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 class MyColors {
   static const Color primaryColor = Color(0xFFDF001D); // Màu chính
   static const Color whiteColor = Color(0xFFFFFFFF); // Màu nền - trắng
