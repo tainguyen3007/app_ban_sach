@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   
-  final String title; // Tiêu đề của AppBar
+  String title; // Tiêu đề của AppBar
   final bool showBackButton; // Hiển thị nút quay lại hay không
   final List<Widget>? actions; // Các hành động ở bên phải AppBar
 
-  const MyAppBar({
+  MyAppBar({
     required this.title,
     this.showBackButton = true,
     this.actions,
@@ -18,6 +18,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      centerTitle: true,
       title: Text(
         title,
         style: const TextStyle(color: Colors.white),
