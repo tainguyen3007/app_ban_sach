@@ -1,5 +1,10 @@
+import 'package:app_ban_sach/core/constants/style.dart';
+import 'package:app_ban_sach/features/ui/screens/cart_screen.dart';
+import 'package:app_ban_sach/features/ui/screens/notification_screen.dart';
+import 'package:app_ban_sach/features/ui/screens/user_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/nav_bottom.dart';
+import 'package:app_ban_sach/features/ui/widgets/silde.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,6 +16,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+  final List<Widget> _pages = [
+    const Center(child: Text('Trang chủ')),
+    const NotificationScreen(),
+    const CartScreen(),
+    const UserScreen(),
+  ];
   void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
@@ -20,13 +31,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text(
-          'home',
-          style: TextStyle(fontSize: 24),
+      appBar: AppBar(
+        backgroundColor: MyColors.primaryColor,
+        toolbarHeight: 0.1,
         ),
-      ),
-      bottomNavigationBar:  MyNavBottom(currentIndex: _currentIndex, onTap: _onItemTapped),
+      body: _pages[_currentIndex],
+      bottomNavigationBar:  MyNavBottom(
+        currentIndex: _currentIndex, 
+        onTap: _onItemTapped),
     );
   }
 }
