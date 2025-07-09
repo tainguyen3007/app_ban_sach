@@ -1,10 +1,22 @@
 import 'package:app_ban_sach/core/constants/style.dart';
+import 'package:app_ban_sach/features/ui/screens/login_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/list_tile.dart';
 import 'package:flutter/material.dart';
 
 class UserProfile extends StatefulWidget {
-  const UserProfile({super.key});
+  String username;
+  String name;
+  String avatar;
+  VoidCallback? onPressed;
 
+  UserProfile({
+    this.username = "your username",
+    this.name = "your name",
+    this.avatar = 'assets/google_logo.jpg',
+    this.onPressed,
+    super.key
+  }
+  );
   @override
   State<UserProfile> createState() => _UserProfileState();
 }
@@ -18,15 +30,19 @@ class _UserProfileState extends State<UserProfile> {
         SizedBox(
           height: 60,
           child: ListTile(
+            onTap: widget.onPressed,
             leading: CircleAvatar(
               radius: 30,
-              backgroundImage: AssetImage('assets/google_logo.jpg'),
+              backgroundImage: AssetImage(widget.avatar),
             ),
             title: Text(
-              'user1@gmail.com', // Tên người dùng
+              widget.username, // username
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            subtitle: Text('SĐT: 020202020'), // Địa chỉ email hoặc thông tin khác
+            subtitle: Text(
+              widget.name,
+              style: TextStyle(fontSize: MyTextStyle.size_13, fontWeight: MyTextStyle.semibold),
+            ),
           ),
         ),
       ],
