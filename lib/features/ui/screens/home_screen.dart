@@ -1,5 +1,6 @@
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/features/ui/screens/cart_screen.dart';
+import 'package:app_ban_sach/features/ui/screens/main_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/notification_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/user_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
@@ -17,10 +18,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
-    const Center(child: Text('Trang chủ')),
-    const NotificationScreen(),
-    const CartScreen(),
-    const UserScreen(),
+    MyMainScreen(),
+    NotificationScreen(),
+    CartScreen(),
+    UserScreen(),
   ];
   void _onItemTapped(int index) {
     setState(() {

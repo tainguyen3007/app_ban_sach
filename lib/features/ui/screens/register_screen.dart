@@ -6,14 +6,14 @@ import 'package:app_ban_sach/features/ui/widgets/text_field.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginState();
+  State<RegisterScreen> createState() => _LoginState();
 }
 
-class _LoginState extends State<LoginScreen> {
+class _LoginState extends State<RegisterScreen> {
   final double paddingHorizontal = 5.0;
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
