@@ -1,30 +1,36 @@
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:flutter/material.dart';
+class Product {
+  final String imageUrl;     // URL hình ảnh sản phẩm
+  final String productName;  // Tên sản phẩm
+  final String price;        // Giá sản phẩm
+  final String oldPrice;     // Giá cũ (nếu có)
+  final String discount;     // Phần trăm giảm giá
+  final int soldCount;    // Số lượng đã bán
 
-class ProductCard extends StatelessWidget {
-  final String imageUrl; // URL hình ảnh sản phẩm
-  final String productName; // Tên sản phẩm
-  final String price; // Giá sản phẩm
-  final String oldPrice; // Giá cũ (nếu có)
-  final String discount; // Phần trăm giảm giá
-  final String soldCount; // Số lượng đã bán
-
-  const ProductCard({
-    this.imageUrl = 'assets/sgk_tv_2_1.jpg',
+  const Product({
+    required this.imageUrl,
     required this.productName,
     required this.price,
     required this.oldPrice,
-    this.discount = '',
-    required this.soldCount,
+    required this.discount,
+    this.soldCount = 0,
+  });
+}
+
+class ProductCard extends StatelessWidget {
+  final Product product;
+
+  const ProductCard({
+    required this.product,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
-    return Container(
-      width: screenWidth /2,
+    return SizedBox(
+      width: screenWidth / 2 - 20, // Chiều rộng của card
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: MyRadius.defaultRadius,
@@ -41,7 +47,7 @@ class ProductCard extends StatelessWidget {
                 child: ClipRRect(
                   borderRadius: MyRadius.defaultRadius,
                   child: Image.asset(
-                    imageUrl,
+                    product.imageUrl,
                     height: 120,
                     width: 120,
                     fit: BoxFit.scaleDown,
@@ -51,7 +57,7 @@ class ProductCard extends StatelessWidget {
               // Tên sản phẩm
               const SizedBox(height: 5),
               Text(
-                productName,
+                product.productName,
                 style: const TextStyle(
                   fontSize: MyTextStyle.size_13,
                   fontWeight: FontWeight.bold,
@@ -64,7 +70,7 @@ class ProductCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    price,
+                    product.price,
                     style: const TextStyle(
                       fontSize: MyTextStyle.size_16,
                       fontWeight: FontWeight.bold,
@@ -73,7 +79,7 @@ class ProductCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 10), 
                   //giảm giá
-                  if (discount != '')
+                  if (product.discount != '')
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
@@ -81,7 +87,7 @@ class ProductCard extends StatelessWidget {
                     ),
                     padding: const EdgeInsets.only(left: 10, right: 10),
                     child: Text(
-                      discount,
+                      product.discount,
                       style: const TextStyle(
                         fontSize: MyTextStyle.size_13,
                         color: MyColors.whiteColor,
@@ -94,7 +100,7 @@ class ProductCard extends StatelessWidget {
               const SizedBox(height: 5),
               // Giá cũ
               Text(
-                oldPrice,
+                product.oldPrice,
                 style: const TextStyle(
                   fontSize: MyTextStyle.size_13,
                   color: Colors.grey,
@@ -106,7 +112,7 @@ class ProductCard extends StatelessWidget {
               Container(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  'Đã bán $soldCount',
+                  'Đã bán  ${product.soldCount.toString()}',
                   style: const TextStyle(
                     fontSize: 12,
                     color: Colors.grey,
