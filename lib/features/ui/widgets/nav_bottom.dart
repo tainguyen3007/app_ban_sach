@@ -14,16 +14,18 @@ class MyNavBottom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 60,
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: MyColors.textColor.withOpacity(0.15), // Màu bóng mờ
+            color: Colors.black12, // Màu bóng mờ
             blurRadius: 4, // Độ mờ của bóng
-            offset: const Offset(0, -3), // Vị trí bóng (hướng lên trên)
+            offset: Offset(0, -3), // Vị trí bóng (hướng lên trên)
           ),
         ],
       ),
       child: BottomNavigationBar(
+        backgroundColor: MyColors.whiteColor,
         currentIndex: currentIndex, // Chỉ mục hiện tại
         onTap: onTap, // Hàm xử lý khi nhấn vào mục
         type: BottomNavigationBarType.fixed, // Loại cố định

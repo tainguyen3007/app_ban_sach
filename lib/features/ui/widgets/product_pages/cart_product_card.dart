@@ -1,20 +1,34 @@
+import 'dart:ffi';
+import 'package:intl/intl.dart'; // Thêm thư viện intl
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/features/ui/widgets/text_field.dart';
 import 'package:flutter/material.dart';
+class CartItem {
+  String imageUrl;
+  String productName;
+  double price;
+  double totalPrice;
+  double oldPrice;
+  bool isChecked;
 
-class CartProductCard extends StatefulWidget {
-  final String imageUrl; // URL hình ảnh sản phẩm
-  final String productName; // Tên sản phẩm
-  final String price; // Giá sản phẩm
-  final String oldPrice; // Giá cũ (nếu có)
-  final VoidCallback onRemove; // Hàm xử lý khi nhấn nút xóa
-
-  const CartProductCard({
+  CartItem({
     required this.imageUrl,
     required this.productName,
     required this.price,
     required this.oldPrice,
-    required this.onRemove,
+    this.isChecked = false,
+  }): totalPrice = price;
+}
+
+class CartProductCard extends StatefulWidget {
+  CartItem item;
+  final ValueChanged<bool?> onChanged;
+  VoidCallback? onRemove; // Hàm xử lý khi nhấn nút xóa
+
+  CartProductCard({
+    required this.item,
+    required this.onChanged,
+    this.onRemove,
     super.key,
   });
 
@@ -24,37 +38,55 @@ class CartProductCard extends StatefulWidget {
 
 class _CartProductCardState extends State<CartProductCard> {
   int quantity = 1; // Số lượng sản phẩm
-
+  double get totalPrice => widget.item.price * quantity;
   void _increaseQuantity() {
     setState(() {
       quantity++;
+      widget.item.totalPrice = totalPrice;
     });
   }
-
   void _decreaseQuantity() {
     setState(() {
       if (quantity > 1) {
         quantity--;
+        widget.item.totalPrice = totalPrice;
       }
     });
   }
-
+  void onChangedCheckedBox(bool? value) {
+    setState(() {
+      widget.item?.isChecked = value ?? true;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10), // Bo góc card
       ),
-      elevation: 3, // Đổ bóng card
+      elevation: 2, // Đổ bóng card
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Row(
           children: [
+            SizedBox(
+              width: 20,
+              child: Checkbox(
+                value: widget.item?.isChecked,
+                onChanged: widget.onChanged,
+                fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                  if (states.contains(MaterialState.selected)) {
+                    return MyColors.warningColor; // Màu khi được chọn
+                  }
+                  return MyColors.whiteColor; // Màu khi không được chọn
+                }),
+              )
+            ),
             // Hình ảnh sản phẩm
             ClipRRect(
               borderRadius: BorderRadius.circular(10), // Bo góc hình ảnh
               child: Image.asset(
-                widget.imageUrl,
+                widget.item?.imageUrl ?? "assets/sgk_tv_2_1_.jpg",
                 height: 120,
                 width: 120,
                 fit: BoxFit.scaleDown,
@@ -67,7 +99,7 @@ class _CartProductCardState extends State<CartProductCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.productName,
+                    widget.item?.productName?? "Name product",
                     style: const TextStyle(
                       fontSize: MyTextStyle.size_13,
                       fontWeight: FontWeight.bold,
@@ -77,7 +109,7 @@ class _CartProductCardState extends State<CartProductCard> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    widget.price,
+                    MyTextStyle.formatCurrency(totalPrice),
                     style: const TextStyle(
                       fontSize: MyTextStyle.size_13,
                       fontWeight: MyTextStyle.semibold,
@@ -86,7 +118,7 @@ class _CartProductCardState extends State<CartProductCard> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    widget.oldPrice,
+                    MyTextStyle.formatCurrency(widget.item.oldPrice),
                     style: const TextStyle(
                       fontSize: MyTextStyle.size_13,
                       color: MyColors.darkGreyColor, // Màu sắc cho giá cũ

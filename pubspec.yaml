@@ -9,11 +9,23 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  intl: ^0.17.0
+  firebase_core: ^latest
+  firebase_auth: ^latest
+  google_sign_in: ^latest
+  
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.13.1
   flutter_test:
-    sdk: flutter
+      sdk: flutter
+  
   flutter_lints: ^5.0.0
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo_offical.png"
 
 flutter:
   uses-material-design: true
