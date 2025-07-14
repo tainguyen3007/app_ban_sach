@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:app_ban_sach/core/constants/style.dart';
+import 'package:app_ban_sach/data/models/Product.dart';
 import 'package:app_ban_sach/features/ui/screens/login_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/order_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
@@ -20,23 +21,7 @@ class UserScreen extends StatefulWidget {
 
 class _UserScreenState extends State<UserScreen> {
   final List<Product> products = [
-    Product(
-      imageUrl: "assets/sgk_tv_2_1.jpg",
-      productName: "Sách TV 2 Tập 1",
-      price: "25.000đ",
-      oldPrice: "30.000đ",
-      discount: "17%",
-      soldCount: 98,
-    ),
-    Product(
-      imageUrl: "assets/sgk_tv_2_1.jpg",
-      productName: "Sách TV 2 Tập 2",
-      price: "28.000đ",
-      oldPrice: "35.000đ",
-      discount: "20%",
-      soldCount: 18,
-    ),
-    // Thêm sản phẩm nếu cần
+    
   ];
   @override
   Widget build(BuildContext context) {
@@ -97,9 +82,9 @@ class _UserScreenState extends State<UserScreen> {
                 onTap: (){},
                 leadingIcon: Icons.redeem_rounded,
               ),
-              Wrap(
-                children: products.map((product) => ProductCard(product: product)).toList(),
-          ),
+              // Wrap(
+              //   children: products.map((product) => ProductCard(product: product)).toList(),
+              // ),
             ],
           ),
         ),

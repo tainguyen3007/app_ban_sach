@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "201412427115",
+    "project_id": "app-ban-sach-ceaa3",
+    "storage_bucket": "app-ban-sach-ceaa3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:201412427115:android:e67b0dc344fcd36acb202e",
+        "android_client_info": {
+          "package_name": "com.huflit.bansach"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "201412427115-kmnoda3gfsccgf6df29prcrrsesfk0th.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrlcSaPS00HXCX42NfNrGWcfNfV159S0Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "201412427115-kmnoda3gfsccgf6df29prcrrsesfk0th.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,27 +1,11 @@
 import 'package:app_ban_sach/core/constants/style.dart';
+import 'package:app_ban_sach/data/models/Product.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-class Product {
-  final String imageUrl;     // URL hình ảnh sản phẩm
-  final String productName;  // Tên sản phẩm
-  final String price;        // Giá sản phẩm
-  final String oldPrice;     // Giá cũ (nếu có)
-  final String discount;     // Phần trăm giảm giá
-  final int soldCount;    // Số lượng đã bán
-
-  const Product({
-    required this.imageUrl,
-    required this.productName,
-    required this.price,
-    required this.oldPrice,
-    required this.discount,
-    this.soldCount = 0,
-  });
-}
-
 class ProductCard extends StatelessWidget {
-  final Product product;
+  Product product;
 
-  const ProductCard({
+  ProductCard({
     required this.product,
     super.key,
   });
@@ -32,6 +16,7 @@ class ProductCard extends StatelessWidget {
     return SizedBox(
       width: screenWidth / 2 - 20, // Chiều rộng của card
       child: Card(
+        color: MyColors.whiteColor,
         shape: RoundedRectangleBorder(
           borderRadius: MyRadius.defaultRadius,
         ),
@@ -46,18 +31,26 @@ class ProductCard extends StatelessWidget {
                 alignment: Alignment.center,
                 child: ClipRRect(
                   borderRadius: MyRadius.defaultRadius,
-                  child: Image.asset(
-                    product.imageUrl,
-                    height: 120,
-                    width: 120,
-                    fit: BoxFit.scaleDown,
-                  ),
+                  child: 
+                    product.imageUrl.isNotEmpty
+                    ?Image.asset(
+                      product.imageUrl,
+                      height: 120,
+                      width: 120,
+                      fit: BoxFit.scaleDown,
+                    )
+                    :Image.asset(
+                      "assets/sgk_tv_2_1.jpg",
+                      height: 120,
+                      width: 120,
+                      fit: BoxFit.scaleDown,
+                    ),
                 ),
               ),
               // Tên sản phẩm
               const SizedBox(height: 5),
               Text(
-                product.productName,
+                product.name,
                 style: const TextStyle(
                   fontSize: MyTextStyle.size_13,
                   fontWeight: FontWeight.bold,
@@ -70,7 +63,7 @@ class ProductCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    product.price,
+                    MyTextStyle.formatCurrency(product.price),
                     style: const TextStyle(
                       fontSize: MyTextStyle.size_16,
                       fontWeight: FontWeight.bold,
@@ -79,7 +72,7 @@ class ProductCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 10), 
                   //giảm giá
-                  if (product.discount != '')
+                  product.discount != 0 ?
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
@@ -87,20 +80,21 @@ class ProductCard extends StatelessWidget {
                     ),
                     padding: const EdgeInsets.only(left: 10, right: 10),
                     child: Text(
-                      product.discount,
+                      MyTextStyle.formatNumber(product.discount)+'%',
                       style: const TextStyle(
                         fontSize: MyTextStyle.size_13,
                         color: MyColors.whiteColor,
                         fontWeight: MyTextStyle.bold
                       ),
                     ),
-                  ),
+                  )
+                  : Row(),
                 ],
               ),
               const SizedBox(height: 5),
               // Giá cũ
               Text(
-                product.oldPrice,
+                MyTextStyle.formatCurrency(product.oldPrice),
                 style: const TextStyle(
                   fontSize: MyTextStyle.size_13,
                   color: Colors.grey,
@@ -112,7 +106,7 @@ class ProductCard extends StatelessWidget {
               Container(
                 alignment: Alignment.centerRight,
                 child: Text(
-                  'Đã bán  ${product.soldCount.toString()}',
+                  'Đã bán ${product.soldCount.toString()}',
                   style: const TextStyle(
                     fontSize: 12,
                     color: Colors.grey,

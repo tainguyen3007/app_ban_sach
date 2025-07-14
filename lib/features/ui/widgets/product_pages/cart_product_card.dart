@@ -45,10 +45,6 @@ class _CartProductCardState extends State<CartProductCard> {
       widget.item.totalPrice = totalPrice;
     });
   }
-  String formatCurrency(double value) {
-    final formatter = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0);
-    return formatter.format(value);
-  }
   void _decreaseQuantity() {
     setState(() {
       if (quantity > 1) {
@@ -113,7 +109,7 @@ class _CartProductCardState extends State<CartProductCard> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    formatCurrency(totalPrice),
+                    MyTextStyle.formatCurrency(totalPrice),
                     style: const TextStyle(
                       fontSize: MyTextStyle.size_13,
                       fontWeight: MyTextStyle.semibold,
@@ -122,7 +118,7 @@ class _CartProductCardState extends State<CartProductCard> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    formatCurrency(widget.item.oldPrice),
+                    MyTextStyle.formatCurrency(widget.item.oldPrice),
                     style: const TextStyle(
                       fontSize: MyTextStyle.size_13,
                       color: MyColors.darkGreyColor, // Màu sắc cho giá cũ

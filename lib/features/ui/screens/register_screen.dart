@@ -16,12 +16,6 @@ class RegisterScreen extends StatefulWidget {
 class _LoginState extends State<RegisterScreen> {
   final double paddingHorizontal = 5.0;
 
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: [
-      'email',
-      'https://www.googleapis.com/auth/userinfo.profile',
-    ],
-  );
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,18 +117,7 @@ class _LoginState extends State<RegisterScreen> {
                 isDisabled: false, // nút bị vô hiêu hóa
                 onPressed: () async {
                   // Xử lý đăng nhập bằng Google ở đây
-                  try {
-                    GoogleSignInAccount? user = await _googleSignIn.signIn();
-                    if (user != null) {
-                      Navigator.pop(context,{
-                          'username': user.displayName ?? '',
-                          'name': user.email,
-                          'photoUrl': user.photoUrl ?? '',
-                      });
-                    }
-                  } catch (e) {
-                    print('Lỗi đăng nhập: $e');
-                  }
+                
                 },
               ),
             ],

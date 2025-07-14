@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 class MyColors {
   static const Color primaryColor = Color(0xFFDF001D); // Màu chính
   static const Color whiteColor = Color(0xFFFFFFFF); // Màu nền - trắng
@@ -27,6 +28,15 @@ class MyTextStyle {
   static const FontWeight semibold = FontWeight.w500; // Độ đậm chữ semibold
   static const FontWeight medium = FontWeight.normal; // Độ đậm chữ medium
   static const FontWeight light = FontWeight.w300; // light text style
+
+  static String formatCurrency(double value) {
+    final formatter = NumberFormat.currency(locale: 'vi_VN', symbol: 'đ', decimalDigits: 0);
+    return formatter.format(value);
+  }
+  static String formatNumber(double value) {
+  final formatter = NumberFormat('#,###', 'vi_VN'); // Định dạng số theo chuẩn Việt Nam
+  return formatter.format(value);
+}
 }
 
 
