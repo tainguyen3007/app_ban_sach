@@ -1,5 +1,6 @@
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/data/models/Product.dart';
+import 'package:app_ban_sach/features/ui/screens/detail_product_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart';
 import 'package:flutter/material.dart';
 
@@ -85,7 +86,18 @@ class HomeScreen extends StatelessWidget {
                 fit: BoxFit.scaleDown,
                 'assets/logo_offical.png'),
               Wrap(
-                children: products.map((product) => ProductCard(product: product)).toList(),
+                children: products.map((product) =>
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ProductDetailScreen(product: product),
+                        ),
+                      );
+                    },
+                    child: ProductCard(product: product),
+                  )
+                ).toList(),
               ),
                 
             ]
