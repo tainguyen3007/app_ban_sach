@@ -10,9 +10,6 @@ dependencies:
   flutter:
     sdk: flutter
   intl: ^0.17.0
-  firebase_core: ^latest
-  firebase_auth: ^latest
-  google_sign_in: ^latest
   
 
 dev_dependencies:
