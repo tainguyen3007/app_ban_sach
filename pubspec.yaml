@@ -9,6 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+<<<<<<< Updated upstream
+=======
+  intl: ^0.17.0
+  
+>>>>>>> Stashed changes
 
 dev_dependencies:
   flutter_test:
