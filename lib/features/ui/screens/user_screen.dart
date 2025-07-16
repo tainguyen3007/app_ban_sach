@@ -11,6 +11,7 @@ import 'package:app_ban_sach/features/ui/widgets/list_tile.dart';
 import 'package:app_ban_sach/features/ui/widgets/order_status_tab.dart';
 import 'package:app_ban_sach/features/ui/widgets/user_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:app_ban_sach/features/ui/screens/settings_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/favorite_products_screen.dart';
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
@@ -33,9 +34,9 @@ class _UserScreenState extends State<UserScreen> {
           IconButton(
             icon: const Icon(Icons.settings, color: MyColors.whiteColor),
             onPressed: () {
-              // Xử lý sự kiện khi nhấn nút cài đặt
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Cài đặt')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );
             },
           ),
