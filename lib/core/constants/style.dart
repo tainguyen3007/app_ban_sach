@@ -5,7 +5,7 @@ class MyColors {
   static const Color whiteColor = Color(0xFFFFFFFF); // Màu nền - trắng
   static const Color textColor = Colors.black;// Màu đen
   static const Color successColor = Color(0xFF5EC240); // màu xanh lá cây
-  static const Color errorColor = Color(0xFFFF0000); // màu xanh da trời
+  static const Color errorColor = Color(0xFFFF0000);
   static const Color warningColor = Color(0xFFF9A825); // màu cam
   static const Color lightGreyColor = Color(0xFFEAEAEA); // Màu xám nhạt
   static const Color greyColor = Color(0xFFD9D9D9); // Màu xám sáng

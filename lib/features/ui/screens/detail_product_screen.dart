@@ -1,4 +1,5 @@
 
+import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ban_sach/data/models/Product.dart';
 import 'package:app_ban_sach/features/ui/screens/home_screen.dart';
@@ -124,17 +125,8 @@ class ProductDetailScreen extends StatelessWidget {
       backgroundColor: MyColors.whiteColor,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56),
-        child: AppBar(
-          backgroundColor: MyColors.primaryColor,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, color: MyColors.whiteColor, size: 26
-            ),
-            onPressed: () {
-              Navigator.of(context).pop(context);
-            },
-          ),
-          title: const Text('', style: TextStyle(color: MyColors.whiteColor)),
+        child: MyAppBar(
+          title: "",
           actions: [
             IconButton(icon: const Icon(Icons.search, color: MyColors.whiteColor, size: 26), onPressed: () {}),
             IconButton(icon: const Icon(Icons.home_outlined, color: MyColors.whiteColor, size: 26), onPressed: () {}),
