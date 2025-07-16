@@ -13,16 +13,15 @@ class _NontificationBoxState extends State<NontificationBox> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.all(5),
       child: Column(children: [
         Container(
           alignment: Alignment.centerLeft,
           child: Text(
             "Cập nhật email ngay để nhận quà từ Tri Thức Store!",
             style: TextStyle(
-              fontSize: 18,
+              fontSize: MyTextStyle.size_13,
               fontWeight: FontWeight.bold,
-              color: const Color.fromARGB(255, 0, 0, 0),
             ),
           ),
         ),        
@@ -31,7 +30,8 @@ class _NontificationBoxState extends State<NontificationBox> {
             "Bạn vừa đăng kí tài khoản tại Tri Thức Store? Hãy cập nhật email ngay để nhận đc các thông báo quà tặng dành cho khách hàng mới! Click ngay vào đây để cập nhật. Đừng quên tiếp tục tham gia mua sắm để nhận được những ưu đã dành riêng cho khách hàng tại Tri Thức Store.",
             textAlign: TextAlign.justify,
             style: TextStyle(
-              
+              fontSize: MyTextStyle.size_13,
+              fontWeight: MyTextStyle.medium,
             ),
           ),
 
