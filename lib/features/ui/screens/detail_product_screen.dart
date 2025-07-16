@@ -5,9 +5,10 @@ import 'package:app_ban_sach/data/models/Product.dart';
 import 'package:app_ban_sach/features/ui/screens/home_screen.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart';
-
-
-
+import 'package:app_ban_sach/features/ui/screens/search_screen.dart';
+import 'package:app_ban_sach/features/ui/screens/user_screen.dart';
+import 'package:app_ban_sach/features/ui/screens/order_screen.dart';
+import 'package:app_ban_sach/features/ui/screens/cart_screen.dart';
 /// Màn hình chi tiết sản phẩm
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
@@ -183,19 +184,50 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         backgroundColor: MyColors.primaryColor,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: MyColors.whiteColor, size: 26),
+          icon: const Icon(Icons.arrow_back, color: MyColors.whiteColor, size: 26),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         title: const Text('', style: TextStyle(color: MyColors.whiteColor)),
         actions: [
-          IconButton(icon: const Icon(Icons.search, color: MyColors.whiteColor, size: 26), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.home_outlined, color: MyColors.whiteColor, size: 26), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.shopping_cart_outlined, color: MyColors.whiteColor, size: 26), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.account_circle_outlined, color: MyColors.whiteColor, size: 26), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.search, color: MyColors.whiteColor, size: 26),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SearchScreen()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.home_outlined, color: MyColors.whiteColor, size: 26),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => HomeScreen()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.shopping_cart_outlined, color: MyColors.whiteColor, size: 26),
+            onPressed: () {
+              Navigator.push(context,
+               MaterialPageRoute(builder:(_) => const CartScreen() ),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.account_circle_outlined, color: MyColors.whiteColor, size: 26),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const UserScreen())        
+              );
+            },
+          ),
         ],
-      ),  
+      ),
     );
   }
 
@@ -294,6 +326,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             const Icon(Icons.local_shipping_outlined, size: 18, color: MyColors.successColor),
             const SizedBox(width: 4),
             const Text('Dự kiến giao', style: TextStyle(fontSize: MyTextStyle.size_13, color: MyColors.textColor)),
+            const Spacer(),
+            const Icon(Icons.chevron_right, size: 22, color: MyColors.darkGreyColor),
           ],
         ),
         const SizedBox(height: 8),
@@ -313,6 +347,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ),
               ),
             ),
+            const Icon(Icons.chevron_right, size: 22, color: MyColors.darkGreyColor),
           ],
         ),
         const SizedBox(height: 8),
@@ -322,6 +357,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             const SizedBox(width: 4),
             const Text('96 nhà sách còn hàng', style: TextStyle(fontSize: MyTextStyle.size_13, color: MyColors.textColor)),
             const Spacer(),
+            const Icon(Icons.chevron_right, size: 22, color: MyColors.darkGreyColor),
           ],
         ),
         const SizedBox(height: 12),
