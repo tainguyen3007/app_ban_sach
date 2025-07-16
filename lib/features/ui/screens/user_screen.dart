@@ -11,7 +11,7 @@ import 'package:app_ban_sach/features/ui/widgets/list_tile.dart';
 import 'package:app_ban_sach/features/ui/widgets/order_status_tab.dart';
 import 'package:app_ban_sach/features/ui/widgets/user_profile.dart';
 import 'package:flutter/material.dart';
-
+import 'package:app_ban_sach/features/ui/screens/favorite_products_screen.dart';
 class UserScreen extends StatefulWidget {
   const UserScreen({super.key});
 
@@ -69,7 +69,12 @@ class _UserScreenState extends State<UserScreen> {
               OrderStatusTab(),
               MyListTile(
                 title: 'Sản phẩm yêu thích', 
-                onTap: (){},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const FavoriteProductsScreen()),
+                  );
+                },
                 leadingIcon: Icons.favorite_border,
               ),
               MyListTile(
