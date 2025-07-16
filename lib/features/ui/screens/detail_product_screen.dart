@@ -9,9 +9,16 @@ import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart
 
 
 /// Màn hình chi tiết sản phẩm
-class ProductDetailScreen extends StatelessWidget {
+class ProductDetailScreen extends StatefulWidget {
   final Product product;
   const ProductDetailScreen({Key? key, required this.product}) : super(key: key);
+
+  @override
+  State<ProductDetailScreen> createState() => _ProductDetailScreenState();
+}
+
+class _ProductDetailScreenState extends State<ProductDetailScreen> {
+  bool isFavorite = false;
 
 
   // Danh sách sản phẩm gợi ý (static demo)
@@ -188,7 +195,7 @@ class ProductDetailScreen extends StatelessWidget {
           IconButton(icon: const Icon(Icons.shopping_cart_outlined, color: MyColors.whiteColor, size: 26), onPressed: () {}),
           IconButton(icon: const Icon(Icons.account_circle_outlined, color: MyColors.whiteColor, size: 26), onPressed: () {}),
         ],
-      ),
+      ),  
     );
   }
 
@@ -199,8 +206,8 @@ class ProductDetailScreen extends StatelessWidget {
       child: Center(
         child: AspectRatio(
           aspectRatio: 1,
-          child: (product.imageUrl.isNotEmpty)
-              ? Image.asset(product.imageUrl, fit: BoxFit.contain)
+          child: (widget.product.imageUrl.isNotEmpty)
+              ? Image.asset(widget.product.imageUrl, fit: BoxFit.contain)
               : Image.asset('assets/sgk_tv_2_1.jpg', fit: BoxFit.contain),
         ),
       ),
@@ -212,24 +219,24 @@ class ProductDetailScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          product.name,
+          widget.product.name,
           style: const TextStyle(fontSize: MyTextStyle.size_16, fontWeight: MyTextStyle.bold),
         ),
         const SizedBox(height: 8),
         Row(
           children: [
             Text(
-              MyTextStyle.formatCurrency(product.price),
+              MyTextStyle.formatCurrency(widget.product.price),
               style: const TextStyle(fontSize: MyTextStyle.size_16, color: MyColors.primaryColor, fontWeight: MyTextStyle.bold),
             ),
             const SizedBox(width: 8),
-            if (product.oldPrice > 0 && product.oldPrice > product.price)
+            if (widget.product.oldPrice > 0 && widget.product.oldPrice > widget.product.price)
               Text(
-                MyTextStyle.formatCurrency(product.oldPrice),
+                MyTextStyle.formatCurrency(widget.product.oldPrice),
                 style: const TextStyle(fontSize: MyTextStyle.size_13, color: MyColors.darkGreyColor, decoration: TextDecoration.lineThrough),
               ),
             const SizedBox(width: 8),
-            if (product.discount > 0)
+            if (widget.product.discount > 0)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
@@ -237,7 +244,7 @@ class ProductDetailScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  '-${product.discount.toStringAsFixed(0)}%',
+                  '-${widget.product.discount.toStringAsFixed(0)}%',
                   style: const TextStyle(color: MyColors.whiteColor, fontSize: MyTextStyle.size_11, fontWeight: MyTextStyle.bold),
                 ),
               ),
@@ -258,7 +265,7 @@ class ProductDetailScreen extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Text(
-              'Đã bán ${MyTextStyle.formatNumber(product.soldCount.toDouble())}',
+              'Đã bán ${MyTextStyle.formatNumber(widget.product.soldCount.toDouble())}',
               style: const TextStyle(
                 fontSize: MyTextStyle.size_13,
                 color: MyColors.darkGreyColor,
@@ -266,7 +273,19 @@ class ProductDetailScreen extends StatelessWidget {
               ),
             ),
             const Spacer(),
-            const Icon(Icons.favorite_border, size: 22, color: MyColors.errorColor),
+            IconButton(
+              icon: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                color: isFavorite ? Colors.red : MyColors.errorColor,
+                size: 22,
+              ),
+              onPressed: () {
+                setState(() {
+                  isFavorite = !isFavorite;
+                });
+              },
+              tooltip: isFavorite ? 'Bỏ yêu thích' : 'Yêu thích',
+            ),
           ],
         ),
         const SizedBox(height: 8),
