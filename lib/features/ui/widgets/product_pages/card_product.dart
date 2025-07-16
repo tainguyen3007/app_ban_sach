@@ -55,7 +55,7 @@ class ProductCard extends StatelessWidget {
                   fontSize: MyTextStyle.size_13,
                   fontWeight: FontWeight.bold,
                 ),
-                maxLines: 2, // Hiển thị tối đa 2 dòng
+                maxLines: 1, // Hiển thị tối đa 2 dòng
                 overflow: TextOverflow.ellipsis, // Cắt chữ nếu quá dài
               ),
               // Giá và giảm giá
@@ -63,6 +63,7 @@ class ProductCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
+
                     MyTextStyle.formatCurrency(product.price),
                     style: const TextStyle(
                       fontSize: MyTextStyle.size_16,
