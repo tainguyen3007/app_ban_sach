@@ -131,10 +131,7 @@ class ProductDetailScreen extends StatelessWidget {
             icon: const Icon(Icons.arrow_back_ios_new, color: MyColors.whiteColor, size: 26
             ),
             onPressed: () {
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => HomeScreen()),
-                (route) => false,
-              );
+              Navigator.of(context).pop(context);
             },
           ),
           title: const Text('', style: TextStyle(color: MyColors.whiteColor)),
@@ -160,8 +157,8 @@ class ProductDetailScreen extends StatelessWidget {
                     child: AspectRatio(
                       aspectRatio: 1,
                      child: (product.imageUrl.isNotEmpty)
-  ? Image.asset(product.imageUrl, fit: BoxFit.contain)
-  : Image.asset('assets/sgk_tv_2_1.jpg', fit: BoxFit.contain),
+                    ? Image.asset(product.imageUrl, fit: BoxFit.contain)
+                    : Image.asset('assets/sgk_tv_2_1.jpg', fit: BoxFit.contain),
                     ),
                   ),
                 ),
@@ -462,20 +459,19 @@ class ProductDetailScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      GridView.builder(
-                        shrinkWrap: true,
-                        physics: const ClampingScrollPhysics(),
-                        padding: EdgeInsets.zero,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.65,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                        ),
-                        itemCount: ProductDetailScreen.suggestionProducts.length,
-                        itemBuilder: (context, index) {
-                          return ProductCard(product: ProductDetailScreen.suggestionProducts[index]);
-                        },
+                      Wrap(
+                        children: suggestionProducts.map((product) =>
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => ProductDetailScreen(product: product),
+                                ),
+                              );
+                            },
+                            child: ProductCard(product: product),
+                          )
+                        ).toList(),
                       ),
                       const SizedBox(height: 80),
                     ],
@@ -489,71 +485,80 @@ class ProductDetailScreen extends StatelessWidget {
             left: 0,
             right: 0,
             bottom: 0,
-            child: Container(
-              color: MyColors.whiteColor,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.remove, size: 18),
-                          onPressed: () {},
+            child: Column(
+              children: [
+                Container(
+                  color: MyColors.whiteColor,
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(6),
                         ),
-                        const Text('1', style: TextStyle(fontSize: 16)),
-                        IconButton(
-                          icon: const Icon(Icons.add, size: 18),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Đã thêm vào giỏ hàng!')),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: MyColors.primaryColor,
-                        side: const BorderSide(color: MyColors.primaryColor),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.remove, size: 10),
+                              onPressed: () {},
+                            ),
+                            const Text('1', style: TextStyle(fontSize: 16)),
+                            IconButton(
+                              icon: const Icon(Icons.add, size: 10),
+                              onPressed: () {},
+                            ),
+                          ],
                         ),
                       ),
-                      child: const Text('Thêm vào giỏ hàng', style: TextStyle(fontSize: MyTextStyle.size_13, fontWeight: MyTextStyle.bold)),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Mua ngay!')),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: MyColors.primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Đã thêm vào giỏ hàng!')),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: MyColors.primaryColor,
+                            side: const BorderSide(color: MyColors.primaryColor),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text('Thêm vào giỏ hàng', style: TextStyle(fontSize: MyTextStyle.size_13, fontWeight: MyTextStyle.bold)),
                         ),
                       ),
-                      child: const Text('Mua ngay', style: TextStyle(fontSize: MyTextStyle.size_13, fontWeight: MyTextStyle.bold)),
-                    ),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Mua ngay!')),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: MyColors.primaryColor,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: const Text('Mua ngay', style: TextStyle(fontSize: MyTextStyle.size_13, fontWeight: MyTextStyle.bold)),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                Container(
+                  color: MyColors.whiteColor,
+                  height: 10,
+                )
+              ],
             ),
           ),
         ],
