@@ -1,4 +1,5 @@
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
+import 'package:app_ban_sach/features/ui/widgets/nontification_box.dart';
 import 'package:flutter/material.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -15,10 +16,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
       appBar: MyAppBar(title: 'Thông báo', showBackButton: false),
       body: Container(
         padding: const EdgeInsets.all(20.0),
-        child: Center(
-          child: Text(
-            'Chức năng thông báo sẽ được cập nhật trong tương lai',
-            style: TextStyle(fontSize: 20, color: Colors.black54),
+        child: SingleChildScrollView(
+          child: Column(children: [
+            NontificationBox()
+          ],
+            
           ),
         ),
       ),
