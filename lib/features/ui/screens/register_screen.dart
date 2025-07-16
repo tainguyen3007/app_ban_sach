@@ -13,6 +13,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _LoginState extends State<RegisterScreen> {
+  //
   final double paddingHorizontal = 5.0;
 
   @override
