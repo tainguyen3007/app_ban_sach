@@ -1,15 +1,20 @@
 import 'package:app_ban_sach/core/constants/style.dart';
+import 'package:app_ban_sach/data/models/Notification.dart';
 import 'package:app_ban_sach/main.dart';
 import 'package:flutter/material.dart';
 
-class NontificationBox extends StatefulWidget {
-  const NontificationBox({super.key});
-
+class NotificationBox extends StatefulWidget {
+  MyNotification notifi;
+  NotificationBox({
+    required this.notifi,
+    super.key
+});
   @override
-  State<NontificationBox> createState() => _NontificationBoxState();
+  State<NotificationBox> createState() => _NotificationBoxState();
 }
 
-class _NontificationBoxState extends State<NontificationBox> {
+class _NotificationBoxState extends State<NotificationBox> {
+  
   @override
   Widget build(BuildContext context) {
     return Container(
