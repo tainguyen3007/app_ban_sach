@@ -1,3 +1,4 @@
+import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
 
@@ -27,15 +28,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: MyColors.primaryColor,
-        centerTitle: true,
-        elevation: 0,
-        title: const Text('Đổi mật khẩu', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+      appBar: MyAppBar(
+        title: 'Quên mật khẩu',
+        showBackButton: true,
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),

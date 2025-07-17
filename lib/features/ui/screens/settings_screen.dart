@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/features/ui/screens/change_password_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/login_screen.dart';
+import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -21,18 +22,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: MyColors.primaryColor,
-        centerTitle: true,
-        elevation: 0,
-        title: const Text(
-          'Cài đặt',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+      appBar: MyAppBar(
+        title: 'Cài đặt',
+        showBackButton: true,
       ),
       body: Column(
         children: [
