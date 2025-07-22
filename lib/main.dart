@@ -1,4 +1,5 @@
 import 'package:app_ban_sach/core/constants/style.dart';
+import 'package:app_ban_sach/data/datasources/DatabaseHelper.dart';
 import 'package:app_ban_sach/features/ui/screens/cart_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/home_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/notification_screen.dart';
@@ -7,7 +8,8 @@ import 'package:app_ban_sach/features/ui/widgets/nav_bottom.dart';
 import 'package:flutter/material.dart';
 
 Future<void> main() async {
-  
+  WidgetsFlutterBinding.ensureInitialized();
+  await DatabaseHelper.instance.database;
   runApp(MainApp());
 }
 class MainApp extends StatelessWidget {
