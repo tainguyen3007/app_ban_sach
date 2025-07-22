@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/data/models/Product.dart';
+import 'package:app_ban_sach/features/ui/screens/detail_user.dart';
 import 'package:app_ban_sach/features/ui/screens/login_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/order_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
@@ -87,6 +88,16 @@ class _UserScreenState extends State<UserScreen> {
                 title: 'Voucher của tôi', 
                 onTap: (){},
                 leadingIcon: Icons.redeem_rounded,
+              ),
+              MyListTile(
+                title: 'Hồ sơ của tôi', 
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>  DetailUserScreen()),
+                  );
+                },
+                leadingIcon: Icons.person,
               ),
               // Wrap(
               //   children: products.map((product) => ProductCard(product: product)).toList(),
