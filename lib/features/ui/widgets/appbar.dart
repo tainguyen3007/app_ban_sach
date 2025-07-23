@@ -22,14 +22,25 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       centerTitle: true,
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white),
-          ),
-          showSearchField ?
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: MyColors.whiteColor,
+          fontWeight: MyTextStyle.bold,
+          fontSize: MyTextStyle.size_24,
+        ),
+      ),
+      backgroundColor: MyColors.primaryColor,
+      leading: showBackButton
+          ? IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                Navigator.pop(context); // Quay lại màn hình trước
+              },
+            )
+          : null,
+      actions:[
+        showSearchField ?
           Expanded(
             child: Container(
               height: 44,
@@ -63,20 +74,8 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
             ),
-          )
-          : const SizedBox.shrink(),
-        ],
-      ),
-      backgroundColor: MyColors.primaryColor,
-      leading: showBackButton
-          ? IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () {
-                Navigator.pop(context); // Quay lại màn hình trước
-              },
-            )
-          : null,
-      actions: actions, // Các widget hành động (nếu có)
+          ) : SizedBox.shrink()
+      ],
     );
   }
   
