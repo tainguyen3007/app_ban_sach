@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/data/models/Product.dart';
+import 'package:app_ban_sach/data/models/product_test..dart';
 import 'package:app_ban_sach/features/ui/screens/detail_user_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/login_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/order_screen.dart';
@@ -22,7 +22,7 @@ class UserScreen extends StatefulWidget {
 }
 
 class _UserScreenState extends State<UserScreen> {
-  final List<Product> products = [
+  final List<ProductTest> products = [
     
   ];
   @override
@@ -51,7 +51,7 @@ class _UserScreenState extends State<UserScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               UserProfile(
-                name: "Tài Nguyễn",
+                name: "Username",
                 username: "tai770@gmail.com",
                 onPressed: () => {
                   Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()))
