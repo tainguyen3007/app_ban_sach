@@ -1,6 +1,6 @@
 import 'package:app_ban_sach/data/models/Notification.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
-import 'package:app_ban_sach/features/ui/widgets/nontification_box.dart';
+import 'package:app_ban_sach/features/ui/widgets/notification_card.dart';
 
 import 'package:flutter/material.dart';
 
@@ -38,13 +38,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: 'Thông báo', showBackButton: false),
+      appBar: MyAppBar(title: 'Thông báo', showBackButton: true,),
       body: Container(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(5),
         child: SingleChildScrollView(
           child: Column(
             children: List.generate(listNotifi.length, (index) {
-                  return NotificationBox(
+                  return NotificationCard(
                     notifi: listNotifi[index],
                   );
                 }),

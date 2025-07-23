@@ -5,10 +5,13 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   
   String title; // Tiêu đề của AppBar
   final bool showBackButton; // Hiển thị nút quay lại hay không
+  final bool showSearchField;
   final List<Widget>? actions; // Các hành động ở bên phải AppBar
+  final TextEditingController searchController = TextEditingController();
 
   MyAppBar({
     required this.title,
+    this.showSearchField = false,
     this.showBackButton = true,
     this.actions,
     super.key,
@@ -19,9 +22,50 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       centerTitle: true,
-      title: Text(
-        title,
-        style: const TextStyle(color: Colors.white),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(color: Colors.white),
+          ),
+          showSearchField ?
+          Expanded(
+            child: Container(
+              height: 44,
+              margin: const EdgeInsets.only(right: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                children: [
+                  const Icon(Icons.search, color: Colors.grey),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: searchController,
+                      decoration: const InputDecoration(
+                        hintText: 'Tìm kiếm',
+                        border: InputBorder.none,
+                        isDense: true,
+                      ),
+                      style: const TextStyle(fontSize: 16),
+                      onSubmitted: (value) {},
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.grey),
+                    onPressed: () => searchController.clear(),
+                    splashRadius: 18,
+                  ),
+                ],
+              ),
+            ),
+          )
+          : const SizedBox.shrink(),
+        ],
       ),
       backgroundColor: MyColors.primaryColor,
       leading: showBackButton

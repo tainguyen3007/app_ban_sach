@@ -1,4 +1,5 @@
 import 'package:app_ban_sach/core/constants/style.dart';
+import 'package:app_ban_sach/features/ui/screens/register_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/user_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/button.dart';
@@ -99,9 +100,16 @@ class _LoginState extends State<LoginScreen> {
                           fontWeight: MyTextStyle.semibold
                         ),
                       ),
-                      const TextButton(
-                        onPressed: null,
-                        child: Text(
+                      TextButton(
+                        onPressed: (){
+                          Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => RegisterScreen(),
+                          ),
+                    );
+                        },
+                        child: const Text(
                           'Đăng ký',
                           style: TextStyle(
                             color: MyColors.primaryColor,
@@ -118,7 +126,7 @@ class _LoginState extends State<LoginScreen> {
                   isOutlined: true, //nút outline
                   isDisabled: false, // nút bị vô hiêu hóa
                   onPressed: () async {
-                    // Xử lý đăng nhập bằng Google ở đây
+                    
                   },
                 ),
               ],

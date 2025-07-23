@@ -6,8 +6,8 @@ class MyNotification {
   MyNotification({
     required this.title,
     required this.text,
-    required this.date,
-  });
+    DateTime? date,
+  }) : date = date ?? DateTime.now();
 
   // Setter
   set title(String value) {
