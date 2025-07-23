@@ -15,16 +15,13 @@ class OrderService {
   Future<int> insertOrder(Order order, List<OrderDetail> details) async {
     final db = await DBHelper.instance.database;
     int orderId = 0;
-
     await db.transaction((txn) async {
       orderId = await txn.insert(ordersTable, order.toMap());
-
       for (var detail in details) {
-        detail.orderId = orderId; // gán orderId sau khi insert
+        detail.orderId = orderId; 
         await txn.insert(detailsTable, detail.toMap());
       }
     });
-
     return orderId;
   }
 
