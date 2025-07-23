@@ -3,6 +3,7 @@ import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/button.dart';
 import 'package:app_ban_sach/features/ui/widgets/text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:app_ban_sach/data/models/address_data.dart';
 
 class NewAddressScreen extends StatefulWidget {
   const NewAddressScreen({super.key});
@@ -15,10 +16,10 @@ class _NewAddressScreenState extends State<NewAddressScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
-  final TextEditingController districtController = TextEditingController();
-  final TextEditingController wardController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
 
+  String? selectedCity;
+  
   bool isDefaultPayment = false;
   bool isDefaultShipping = false;
 
@@ -38,19 +39,6 @@ class _NewAddressScreenState extends State<NewAddressScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 32),
-                  const Center(
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: MyTextStyle.size_16),
-                      child: Text(
-                        "Nhập thông tin địa chỉ",
-                        style: TextStyle(
-                          fontWeight: MyTextStyle.bold,
-                          fontSize: 20,
-                          color: MyColors.textColor,
-                        ),
-                      ),
-                    ),
-                  ),
                   MyTextField(
                     labelText: "Họ và tên",
                     hintText: "Nhập họ và tên người nhận",
@@ -63,22 +51,35 @@ class _NewAddressScreenState extends State<NewAddressScreen> {
                     controller: phoneController,
                   ),
                   const SizedBox(height: 12),
-                  MyTextField(
-                    labelText: "Tỉnh/Thành phố",
-                    hintText: "Chọn tỉnh/thành phố",
-                    controller: cityController,
-                  ),
-                  const SizedBox(height: 12),
-                  MyTextField(
-                    labelText: "Quận/Huyện",
-                    hintText: "Chọn quận/huyện",
-                    controller: districtController,
-                  ),
-                  const SizedBox(height: 12),
-                  MyTextField(
-                    labelText: "Phường/Xã",
-                    hintText: "Chọn phường/xã",
-                    controller: wardController,
+                  GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (context) {
+                          return ListView(
+                            children: cities.map((city) {
+                              return ListTile(
+                                title: Text(city),
+                                onTap: () {
+                                  setState(() {
+                                    selectedCity = city;
+                                    cityController.text = city;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                              );
+                            }).toList(),
+                          );
+                        },
+                      );
+                    },
+                    child: AbsorbPointer(
+                      child: MyTextField(
+                        labelText: "Tỉnh/Thành phố",
+                        hintText: "Chọn tỉnh/thành phố",
+                        controller: cityController,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 12),
                   MyTextField(
@@ -91,7 +92,7 @@ class _NewAddressScreenState extends State<NewAddressScreen> {
                     "Thiết lập mặc định",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 13,
+                      fontSize: MyTextStyle.size_13,
                       color: MyColors.textColor,
                     ),
                   ),
@@ -105,7 +106,10 @@ class _NewAddressScreenState extends State<NewAddressScreen> {
                           });
                         },
                       ),
-                      const Text("Địa chỉ thanh toán mặc định"),
+                      const Text(
+                        "Địa chỉ thanh toán mặc định",
+                        style: TextStyle(fontSize: MyTextStyle.size_13),
+                      ),
                     ],
                   ),
                   Row(
@@ -118,7 +122,10 @@ class _NewAddressScreenState extends State<NewAddressScreen> {
                           });
                         },
                       ),
-                      const Text("Địa chỉ giao hàng mặc định"),
+                      const Text(
+                        "Địa chỉ giao hàng mặc định",
+                        style: TextStyle(fontSize: MyTextStyle.size_13),
+                      ),
                     ],
                   ),
                 ],
