@@ -6,6 +6,7 @@ import 'package:app_ban_sach/data/models/product_test..dart';
 import 'package:app_ban_sach/features/ui/screens/detail_user_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/login_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/order_screen.dart';
+import 'package:app_ban_sach/features/ui/screens/voucher_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart';
 import 'package:app_ban_sach/features/ui/widgets/list_tile.dart';
@@ -86,7 +87,9 @@ class _UserScreenState extends State<UserScreen> {
               ),
               MyListTile(
                 title: 'Voucher của tôi', 
-                onTap: (){},
+                onTap: () => {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  VoucherScreen()))
+                },
                 leadingIcon: Icons.redeem_rounded,
               ),
               MyListTile(
