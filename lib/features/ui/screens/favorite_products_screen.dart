@@ -1,6 +1,6 @@
 import 'package:app_ban_sach/features/ui/widgets/favorite_card.dart';
 import 'package:flutter/material.dart';
-import 'package:app_ban_sach/data/models/Product.dart';
+import 'package:app_ban_sach/data/models/product_test..dart';
 import 'package:app_ban_sach/core/constants/style.dart';
 
 class FavoriteProductsScreen extends StatefulWidget {
@@ -12,8 +12,8 @@ class FavoriteProductsScreen extends StatefulWidget {
 
 class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
   // Demo list, replace with your favorite products list from state/provider
-  List<Product> favoriteProducts = [
-    Product(
+  List<ProductTest> favoriteProducts = [
+    ProductTest(
       id: '1',
       name: 'Giáo Trình Triết Học Mác - Lênin (Dành Cho Bậc Đại Học Hệ Không Chuyên Lý Luận Chính Trị)',
       description: '',
@@ -23,7 +23,7 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
       discount: 0,
       soldCount: 0,
     ),
-    Product(
+    ProductTest(
       id: '2',
       name: 'Giáo Trình Triết Học Mác - Lênin (Dành Cho Bậc Đại Học Hệ Không Chuyên Lý Luận Chính Trị)',
       description: '',
@@ -33,7 +33,7 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
       discount: 0,
       soldCount: 0,
     ),
-    Product(
+    ProductTest(
       id: '3',
       name: 'Giáo Trình Triết Học Mác - Lênin (Dành Cho Bậc Đại Học Hệ Không Chuyên Lý Luận Chính Trị)',
       description: '',
@@ -43,7 +43,7 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
       discount: 0,
       soldCount: 0,
     ),
-    Product(
+    ProductTest(
       id: '4',
       name: 'Giáo Trình Triết Học Mác - Lênin (Dành Cho Bậc Đại Học Hệ Không Chuyên Lý Luận Chính Trị)',
       description: '',
