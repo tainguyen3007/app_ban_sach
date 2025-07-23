@@ -1,7 +1,10 @@
 import 'package:app_ban_sach/core/constants/style.dart';
+import 'package:app_ban_sach/data/datasources/catetgory_service.dart';
 import 'package:app_ban_sach/data/datasources/product_service.dart';
+import 'package:app_ban_sach/data/models/category.dart';
 import 'package:app_ban_sach/data/models/product.dart';
 import 'package:app_ban_sach/features/ui/screens/detail_product_screen.dart';
+import 'package:app_ban_sach/features/ui/widgets/list_tile.dart';
 import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart';
 import 'package:flutter/material.dart';
 
@@ -16,37 +19,47 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<List<Product>> fetchProducts() {
     return ProductService().getAllProducts();
   }
-  void openFullScreenDrawer() {
-    showDialog(
-      context: context,
-      builder: (_) => Scaffold(
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Column(
-            children: [
-              AppBar(
-                title: const Text('Danh mục sản phẩm'),
-                backgroundColor: MyColors.primaryColor,
-                leading: IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-              const Expanded(
-                child: Center(
-                  child: Text('Nội dung danh mục ở đây'),
-                ),
-              ),
-            ],
+  Future<List<Category>> fetchCategories() {
+    return CategoryService().getAllCategories();
+  }
+  Widget customListTile({
+    required String title,
+    void Function()? onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
           ),
+        ],
+      ),
+      child: ListTile(
+        title: Text(
+          title,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: onTap,
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.category, color: Colors.white), // 🔁 icon tùy chọn
+            onPressed: () => Scaffold.of(context).openDrawer(),     // mở Drawer
+          ),
+        ),
         backgroundColor: MyColors.primaryColor,
         title: Row(
           children: [
@@ -89,30 +102,36 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       
       drawer: Drawer(
-        
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(color: MyColors.primaryColor),
-              child: const Text(
-                "Danh mục",
-                style: TextStyle(color: Colors.white, fontSize: 22),
+            Expanded(
+              child: FutureBuilder<List<Category>>(
+                future: fetchCategories(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Lỗi: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('Không có danh mục.'));
+                  }
+
+                  final categories = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      final category = categories[index];
+                      return customListTile(
+                        title: category.name,
+                        onTap: () {
+                          Navigator.pop(context);
+                          // TODO: xử lý khi chọn danh mục
+                        },
+                      );
+                    },
+                  );
+                },
               ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.book),
-              title: const Text("Sách văn học"),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.school),
-              title: const Text("Sách kỹ năng"),
-              onTap: () {
-                Navigator.pop(context);
-              },
             ),
           ],
         ),
@@ -207,3 +226,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
