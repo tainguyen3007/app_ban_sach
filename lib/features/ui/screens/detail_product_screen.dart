@@ -1,6 +1,8 @@
 
+import 'package:app_ban_sach/data/datasources/product_service.dart';
+import 'package:app_ban_sach/data/models/product.dart';
 import 'package:flutter/material.dart';
-import 'package:app_ban_sach/data/models/Product.dart';
+import 'package:app_ban_sach/data/models/product_test..dart';
 import 'package:app_ban_sach/features/ui/screens/home_screen.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart';
@@ -19,112 +21,7 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   bool isFavorite = false;
-
-
   // Danh sách sản phẩm gợi ý (static demo)
-  static final List<Product> suggestionProducts = [
-    Product(
-      id: '1',
-      name: 'Sách Tiếng Việt 2 - Tập 1',
-      description: 'Sách giáo khoa lớp 2 tập 1',
-      imageUrl: 'assets/sgk_tv_2_1.jpg',
-      price: 85000,
-      oldPrice: 105000,
-      discount: 33,
-      soldCount: 99,
-    ),
-    Product(
-      id: '2',
-      name: 'Logo Chính Thức',
-      description: 'Logo nhà xuất bản',
-      imageUrl: 'assets/logo_offical.png',
-      price: 85000,
-      oldPrice: 105000,
-      discount: 33,
-      soldCount: 99,
-    ),
-    Product(
-      id: '3',
-      name: 'Google Logo',
-      description: 'Logo Google',
-      imageUrl: 'assets/google_logo.jpg',
-      price: 85000,
-      oldPrice: 105000,
-      discount: 33,
-      soldCount: 99,
-    ),
-    Product(
-      id: '4',
-      name: 'Sách Tiếng Việt 2 - Tập 1 (Bản 2)',
-      description: 'Sách giáo khoa lớp 2 tập 1 bản 2',
-      imageUrl: 'assets/sgk_tv_2_1.jpg',
-      price: 85000,
-      oldPrice: 105000,
-      discount: 33,
-      soldCount: 99,
-    ),
-    Product(
-      id: '5',
-      name: 'Logo Sách Mới',
-      description: 'Logo sách mới',
-      imageUrl: 'assets/logo_offical.png',
-      price: 85000,
-      oldPrice: 105000,
-      discount: 33,
-      soldCount: 99,
-    ),
-    Product(
-      id: '6',
-      name: 'Google Sách',
-      description: 'Google sách',
-      imageUrl: 'assets/google_logo.jpg',
-      price: 85000,
-      oldPrice: 105000,
-      discount: 33,
-      soldCount: 99,
-    ),
-    Product(
-      id: '7',
-      name: 'Sách Giáo Khoa 2025',
-      description: 'Sách giáo khoa năm 2025',
-      imageUrl: 'assets/sgk_tv_2_1.jpg',
-      price: 85000,
-      oldPrice: 105000,
-      discount: 33,
-      soldCount: 99,
-    ),
-    Product(
-      id: '8',
-      name: 'Logo Nhà Xuất Bản',
-      description: 'Logo nhà xuất bản',
-      imageUrl: 'assets/logo_offical.png',
-      price: 85000,
-      oldPrice: 105000,
-      discount: 33,
-      soldCount: 99,
-    ),
-    Product(
-      id: '9',
-      name: 'Google Education',
-      description: 'Google Education',
-      imageUrl: 'assets/google_logo.jpg',
-      price: 85000,
-      oldPrice: 105000,
-      discount: 33,
-      soldCount: 99,
-    ),
-    Product(
-      id: '10',
-      name: 'Sách Tiếng Việt 2 - Tập 1 (Bản Đặc Biệt)',
-      description: 'Sách giáo khoa lớp 2 tập 1 bản đặc biệt',
-      imageUrl: 'assets/sgk_tv_2_1.jpg',
-      price: 85000,
-      oldPrice: 105000,
-      discount: 33,
-      soldCount: 99,
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -156,7 +53,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      SuggestionSection(products: suggestionProducts),
                       SizedBox(height: MediaQuery.of(context).padding.bottom + 10),
                     ],
                   ),
@@ -261,9 +157,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               style: const TextStyle(fontSize: MyTextStyle.size_16, color: MyColors.primaryColor, fontWeight: MyTextStyle.bold),
             ),
             const SizedBox(width: 8),
-            if (widget.product.oldPrice > 0 && widget.product.oldPrice > widget.product.price)
+            if (widget.product.oldprice > 0 && widget.product.oldprice > widget.product.price)
               Text(
-                MyTextStyle.formatCurrency(widget.product.oldPrice),
+                MyTextStyle.formatCurrency(widget.product.oldprice),
                 style: const TextStyle(fontSize: MyTextStyle.size_13, color: MyColors.darkGreyColor, decoration: TextDecoration.lineThrough),
               ),
             const SizedBox(width: 8),
