@@ -2,6 +2,7 @@
 import 'package:app_ban_sach/data/datasources/product_service.dart';
 import 'package:app_ban_sach/data/models/product.dart';
 import 'package:flutter/material.dart';
+import 'package:app_ban_sach/data/models/cart.dart';
 import 'package:app_ban_sach/data/models/product_test..dart';
 import 'package:app_ban_sach/features/ui/screens/home_screen.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
@@ -10,6 +11,9 @@ import 'package:app_ban_sach/features/ui/screens/search_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/user_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/order_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/cart_screen.dart';
+import 'package:app_ban_sach/data/datasources/cart_service.dart';
+import 'package:app_ban_sach/data/datasources/user_service.dart';
+
 /// Màn hình chi tiết sản phẩm
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
@@ -21,6 +25,7 @@ class ProductDetailScreen extends StatefulWidget {
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   bool isFavorite = false;
+  int quantity = 1;
   // Danh sách sản phẩm gợi ý (static demo)
   @override
   Widget build(BuildContext context) {
@@ -292,7 +297,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       ),
     ]);
   }
-
   Widget _buildBottomBar(BuildContext context) {
     return Column(
       children: [
@@ -309,13 +313,21 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.remove, size: 10),
-                      onPressed: () {},
+                      icon: const Icon(Icons.remove, size: 16),
+                      onPressed: () {
+                        setState(() {
+                          if (quantity > 1) quantity--;
+                        });
+                      },
                     ),
-                    const Text('1', style: TextStyle(fontSize: 16)),
+                    Text('$quantity', style: const TextStyle(fontSize: 16)),
                     IconButton(
-                      icon: const Icon(Icons.add, size: 10),
-                      onPressed: () {},
+                      icon: const Icon(Icons.add, size: 16),
+                      onPressed: () {
+                        setState(() {
+                          quantity++;
+                        });
+                      },
                     ),
                   ],
                 ),
@@ -323,7 +335,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               const SizedBox(width: 5),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    // Lấy userId hiện tại từ UserService
+                    int userId = await UserService().getCurrentUserId();
+                   final cartItem = Cart(
+                    userId: userId,
+                    productId: widget.product.id!, // Thêm dấu ! nếu chắc chắn id không null
+                    quantity: quantity,
+                  );
+                    await CartService().insertCart(cartItem);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Đã thêm vào giỏ hàng!')),
                     );
@@ -369,6 +389,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       ],
     );
   }
+  // ...existing code...
 }
 
 /// Widget hiển thị danh sách sản phẩm gợi ý

@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:app_ban_sach/data/models/user.dart';
 import 'package:app_ban_sach/data/datasources/db_helper.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 class UserService {
   static final UserService _instance = UserService._internal();
   factory UserService() => _instance;
@@ -68,5 +68,10 @@ class UserService {
       return User.fromMap(result.first);
     }
     return null;
+  }
+  // Lấy id uerd ở hiện tại
+   Future<int> getCurrentUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getInt('userId') ?? 0;
   }
 }
