@@ -23,7 +23,16 @@ class DBHelper {
       onCreate: _createDB,
     );
   }
+  Future<void> resetDatabase() async {
+    final dbPath = await getDatabasesPath();
+    final path = join(dbPath, 'dbbansach.db');
 
+    // Xoá file database hiện tại
+    await deleteDatabase(path);
+
+    // Tạo lại database
+    _database = await _initDB('dbbansach.db');
+  }
   Future _createDB(Database db, int version) async {
     // DROP TABLE nếu đã tồn tại (xóa sạch dữ liệu cũ)
     await db.execute('DROP TABLE IF EXISTS ORDER_DETAIL;');
@@ -104,11 +113,15 @@ class DBHelper {
       );
     ''');
     //categories
-    await db.insert('CATEGORY', {'name': 'Sách Lập trình', 'description': 'Sách dành cho lập trình viên'});
-    await db.insert('CATEGORY', {'name': 'Thiếu nhi', 'description': 'Sách cho bé'});
+    await db.insert('CATEGORY', {'name': 'Sách giáo dục'});
+    await db.insert('CATEGORY', {'name': 'Truyện tranh'});
+    await db.insert('CATEGORY', {'name': 'Kỹ năng sống'});
+    await db.insert('CATEGORY', {'name': 'Tiểu thuyết'});
+    await db.insert('CATEGORY', {'name': 'Tâm lý học'});
+
     // PRODUCT
     await db.insert('PRODUCT', {
-      'name': 'Flutter cơ bản 2',
+      'name': 'Flutter cơ bản ',
       'des': 'Hướng dẫn học Flutter từ A đến Z',
       'price': 150000,
       'oldprice': 200000,
@@ -223,6 +236,27 @@ class DBHelper {
       'discount': 21,
       'imageUrl': 'assets/cun-con.jpg',
       'categoryId': 1
+    });
+    //user
+    await db.insert('USER', {
+      'email': 'a@gmail.com', 'password': '123456', 'name': 'An',
+      'birthday': '2000-01-01', 'gender': 1, 'phoneNumber': '0900000001'
+    });
+    await db.insert('USER', {
+      'email': 'b@gmail.com', 'password': '123456', 'name': 'Bình',
+      'birthday': '2001-01-01', 'gender': 0, 'phoneNumber': '0900000002'
+    });
+    await db.insert('USER', {
+      'email': 'c@gmail.com', 'password': '123456', 'name': 'Cường',
+      'birthday': '1999-01-01', 'gender': 1, 'phoneNumber': '0900000003'
+    });
+    await db.insert('USER', {
+      'email': 'd@gmail.com', 'password': '123456', 'name': 'Dương',
+      'birthday': '1998-01-01', 'gender': 0, 'phoneNumber': '0900000004'
+    });
+    await db.insert('USER', {
+      'email': 'admin@gmail.com', 'password': 'admin', 'name': 'Admin',
+      'birthday': '1990-01-01', 'gender': 1, 'phoneNumber': '0900000005', 'role': 'admin'
     });
 
   }
