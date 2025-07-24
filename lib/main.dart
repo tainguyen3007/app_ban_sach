@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Bắt buộc khi dùng async ở main
   await DBHelper.instance.database;
+  await DBHelper.instance.resetDatabase();
   runApp(MainApp());
 }
 class MainApp extends StatelessWidget {
