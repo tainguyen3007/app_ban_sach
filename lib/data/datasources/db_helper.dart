@@ -77,6 +77,17 @@ class DBHelper {
         FOREIGN KEY (categoryId) REFERENCES CATEGORY(id)
       );
     ''');
+    await db.execute('''
+      CREATE TABLE FAVORITE_PRODUCT (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        userId INTEGER NOT NULL,
+        productId INTEGER NOT NULL,
+        createdAt TEXT DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (userId) REFERENCES USER(id) ON DELETE CASCADE,
+        FOREIGN KEY (productId) REFERENCES PRODUCT(id) ON DELETE CASCADE,
+        UNIQUE(userId, productId)
+      );
+    ''');
 
     await db.execute('''
       CREATE TABLE CART (
@@ -136,7 +147,7 @@ class DBHelper {
       'price': 25000,
       'oldprice': 30000,
       'discount': 17,
-      'imageUrl': 'assets/ngoaivan.png',
+      'imageUrl': '',
       'categoryId': 2
     });
     await db.insert('PRODUCT', {
@@ -239,8 +250,8 @@ class DBHelper {
     });
     //user
     await db.insert('USER', {
-      'email': 'a@gmail.com', 'password': '123456', 'name': 'An',
-      'birthday': '2000-01-01', 'gender': 1, 'phoneNumber': '0900000001'
+      'email': 'tai@gmail.com', 'password': '123', 'name': 'Tài',
+      'birthday': '2004-01-01', 'gender': 1, 'phoneNumber': '0769779218'
     });
     await db.insert('USER', {
       'email': 'b@gmail.com', 'password': '123456', 'name': 'Bình',
@@ -257,6 +268,39 @@ class DBHelper {
     await db.insert('USER', {
       'email': 'admin@gmail.com', 'password': 'admin', 'name': 'Admin',
       'birthday': '1990-01-01', 'gender': 1, 'phoneNumber': '0900000005', 'role': 'admin'
+    });
+    //Favorite product
+    await db.insert('FAVORITE_PRODUCT', {
+      'userId': 1,
+      'productId': 1,
+    });
+    await db.insert('FAVORITE_PRODUCT', {
+      'userId': 1,
+      'productId': 2,
+    });
+    await db.insert('FAVORITE_PRODUCT', {
+      'userId': 1,
+      'productId': 3,
+    });
+    await db.insert('FAVORITE_PRODUCT', {
+      'userId': 2,
+      'productId': 2,
+    });
+    await db.insert('FAVORITE_PRODUCT', {
+      'userId': 2,
+      'productId': 5,
+    });
+    await db.insert('FAVORITE_PRODUCT', {
+      'userId': 3,
+      'productId': 4,
+    });
+    await db.insert('FAVORITE_PRODUCT', {
+      'userId': 3,
+      'productId': 6,
+    });
+    await db.insert('FAVORITE_PRODUCT', {
+      'userId': 3,
+      'productId': 7,
     });
 
   }
