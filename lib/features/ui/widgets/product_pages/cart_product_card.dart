@@ -112,7 +112,6 @@ class _CartProductCardState extends State<CartProductCard> {
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
-
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       elevation: 2,
@@ -136,12 +135,20 @@ class _CartProductCardState extends State<CartProductCard> {
             // Image
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
+              child: item.imageUrl == '' ? 
+              Image.asset(
+                "assets/default_images/default_image.png",
+                height: 120,
+                width: 120,
+                fit: BoxFit.scaleDown,
+              )
+              : 
+              Image.asset(
                 item.imageUrl,
                 height: 120,
                 width: 120,
                 fit: BoxFit.scaleDown,
-              ),
+              )
             ),
             const SizedBox(width: 10),
             // Product info

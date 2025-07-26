@@ -1,6 +1,6 @@
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/data/models/product.dart';
-import 'package:app_ban_sach/data/models/product_test..dart';
+import 'package:app_ban_sach/data/models/product_test.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 class ProductCard extends StatelessWidget {
@@ -14,7 +14,7 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    return SizedBox(
+    return Container(
       width: screenWidth / 2 - 20,
       child: Card(
         color: MyColors.whiteColor,
@@ -36,12 +36,12 @@ class ProductCard extends StatelessWidget {
                 child: Image.asset(
                   product.imageUrl.isNotEmpty
                       ? product.imageUrl
-                      : 'assets/sgk_tv_2_1.jpg',
+                      : 'assets/default_images/default_image.png',
                   fit: BoxFit.scaleDown,
                 ),
               ),
             ),
-
+      
             // Nội dung
             Padding(
               padding: const EdgeInsets.all(10),
@@ -49,18 +49,22 @@ class ProductCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Tên sản phẩm
-                  Text(
-                    product.name,
-                    style: const TextStyle(
-                      fontSize: MyTextStyle.size_13,
-                      fontWeight: FontWeight.bold,
+                  SizedBox(
+                    height: 34,
+                    child: Text(
+                      product.name,
+                      style: const TextStyle(
+                        fontSize: MyTextStyle.size_13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      
                     ),
-                    maxLines: 1,
-                    //overflow: TextOverflow.ellipsis,
                   ),
-
+      
                   const SizedBox(height: 6),
-
+      
                   // Giá và giảm giá
                   Row(
                     children: [
@@ -91,9 +95,9 @@ class ProductCard extends StatelessWidget {
                         ),
                     ],
                   ),
-
+      
                   const SizedBox(height: 4),
-
+      
                   // Giá gốc
                   if (product.oldprice > 0)
                     Text(
@@ -104,9 +108,9 @@ class ProductCard extends StatelessWidget {
                         decoration: TextDecoration.lineThrough,
                       ),
                     ),
-
+      
                   const SizedBox(height: 6),
-
+      
                   // Số lượng đã bán
                   Align(
                     alignment: Alignment.centerRight,

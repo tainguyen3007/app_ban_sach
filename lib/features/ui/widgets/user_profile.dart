@@ -10,7 +10,7 @@ class UserProfile extends StatefulWidget {
   UserProfile({
     this.username = "your username",
     this.name = "your name",
-    this.avatar = 'assets/google_logo.jpg',
+    this.avatar = 'assets/default_images/default_avatar.jpg',
     this.onPressed,
     super.key
   }

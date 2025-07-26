@@ -67,13 +67,13 @@ class _MyTextFieldState extends State<MyTextField> {
             enabledBorder: OutlineInputBorder(
               borderRadius: MyRadius.defaultRadius,
               borderSide: BorderSide(
-                color: _isEmpty ? MyColors.textColor : MyColors.greyColor,
+                color: MyColors.textColor,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: MyRadius.defaultRadius,
               borderSide: BorderSide(
-                color: _isEmpty ? MyColors.textColor : MyColors.primaryColor,
+                color: MyColors.textColor,
                 width: 2,
               ),
             ),
@@ -83,7 +83,7 @@ class _MyTextFieldState extends State<MyTextField> {
           const Padding(
             padding: EdgeInsets.only(top: 5, left: 4),
             child: Text(
-              'Không được để trống',
+              'Bắt buộc*',
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.red,
