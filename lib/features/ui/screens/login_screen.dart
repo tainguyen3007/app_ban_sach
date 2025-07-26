@@ -1,10 +1,13 @@
 import 'package:app_ban_sach/core/constants/style.dart';
+import 'package:app_ban_sach/data/datasources/user_service.dart';
 import 'package:app_ban_sach/features/ui/screens/register_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/user_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/button.dart';
 import 'package:app_ban_sach/features/ui/widgets/text_field.dart';
+import 'package:app_ban_sach/main.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 const List<String> scopes = <String>[
   'https://www.googleapis.com/auth/contacts.readonly',
 ];
@@ -16,8 +19,44 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginState extends State<LoginScreen> {
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   final double paddingHorizontal = 5.0;
-  
+  Future<void> _onClickLogin() async {
+    final email = phoneController.text.trim(); // hoặc dùng email nếu app bạn login bằng email
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng nhập đủ thông tin')),
+      );
+      return;
+    }
+
+    final user = await UserService().login(email, password);
+    if (user != null) {
+      final prefs = await SharedPreferences.getInstance();
+      final isLoggedIn = await prefs.setBool('isLoggedIn', true);
+      await prefs.setInt('userId', user.id ?? 0);
+      // Chuyển sang UserScreen
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MainScreen(isLoggedIn: isLoggedIn, indexPage: 3,user: user,),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Sai thông tin đăng nhập')),
+      );
+    }
+  }
+  Future<void> _login(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
+    await prefs.setInt('userId', 1); // giả lập userId = 1
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,16 +80,16 @@ class _LoginState extends State<LoginScreen> {
                 SizedBox(height: paddingHorizontal),
                 // Nhập sdt
                 MyTextField(
-                  labelText: 'Số điện thoại',
-                  hintText: 'Nhập số điện thoại',
-                  controller: TextEditingController(),
+                  labelText: 'Username',
+                  hintText: 'Nhập username',
+                  controller: phoneController,
                   isPassword: false,
                 ),
                 // Nhập password
                 MyTextField(
                   labelText: 'Mật khẩu',
                   hintText: 'Nhập mật khẩu',
-                  controller: TextEditingController(),
+                  controller: passwordController,
                   isPassword: true,
                 ),
                 // Đăng nhập button
@@ -58,12 +97,7 @@ class _LoginState extends State<LoginScreen> {
                   text: 'Đăng nhập', 
                   isOutlined: false, //nút outline
                   isDisabled: false, // nút bị vô hiêu hóa
-                  onPressed: () {
-                    // Xử lý đăng nhập ở đây
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Đăng nhập thành công!')),
-                    );
-                  },
+                  onPressed: _onClickLogin,
                 ),
                 // Quên mật khẩu
                 SizedBox(
