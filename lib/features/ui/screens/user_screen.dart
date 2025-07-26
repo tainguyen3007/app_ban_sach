@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/data/models/product_test..dart';
+import 'package:app_ban_sach/data/models/product_test.dart';
+import 'package:app_ban_sach/data/models/user.dart';
 import 'package:app_ban_sach/features/ui/screens/detail_user_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/login_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/order_screen.dart';
@@ -16,21 +16,24 @@ import 'package:flutter/material.dart';
 import 'package:app_ban_sach/features/ui/screens/settings_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/favorite_products_screen.dart';
 class UserScreen extends StatefulWidget {
-  const UserScreen({super.key});
+  final User? user;
+  final bool? isLoggedIn;
+  const UserScreen({super.key, this.user, this.isLoggedIn});
 
   @override
   State<UserScreen> createState() => _UserScreenState();
 }
 
 class _UserScreenState extends State<UserScreen> {
-  final List<ProductTest> products = [
-    
-  ];
+  final List<ProductTest> products = [];
+  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return widget.isLoggedIn == false 
+    ? LoginScreen()
+    :Scaffold(
       appBar: MyAppBar(
-        title: 'Tài khoản ',
+        title: 'Tài khoản',
         showBackButton: false,
         actions: [
           IconButton(
@@ -51,13 +54,22 @@ class _UserScreenState extends State<UserScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              widget.user == null? 
               UserProfile(
-                name: "Username",
-                username: "tai770@gmail.com",
+                name: widget.user?.name ?? "Khách" ,
+                username: widget.user?.email ?? "Đang là khách",
                 onPressed: () => {
                   Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()))
                 },
-              ),
+              ):
+              UserProfile(
+                name: widget.user?.name?? "khahc1",
+                username: widget.user?.email ?? "Đang là khách",
+                onPressed: () => {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()))
+                },
+              )
+              ,
               const SizedBox(height: 10),
               MyListTile(
                 title: 'Đơn hàng của tôi', 
