@@ -14,13 +14,13 @@ class MyNavBottom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60,
+      padding: EdgeInsets.only(bottom: 15),
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
             color: Colors.black12, // Màu bóng mờ
-            blurRadius: 4, // Độ mờ của bóng
-            offset: Offset(0, -3), // Vị trí bóng (hướng lên trên)
+            blurRadius: 3, // Độ mờ của bóng
+            offset: Offset(0, -2), // Vị trí bóng (hướng lên trên)
           ),
         ],
       ),
@@ -28,7 +28,7 @@ class MyNavBottom extends StatelessWidget {
         backgroundColor: MyColors.whiteColor,
         currentIndex: currentIndex, // Chỉ mục hiện tại
         onTap: onTap, // Hàm xử lý khi nhấn vào mục
-        type: BottomNavigationBarType.fixed, // Loại cố định
+        type: BottomNavigationBarType.fixed, 
         selectedItemColor: MyColors.primaryColor, // Màu mục được chọn
         unselectedItemColor: MyColors.textColor, // Màu mục chưa được chọn
         items: const [

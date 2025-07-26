@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
 
-class MyTextField extends StatelessWidget {
-  final String labelText; // Nhãn của TextField
-  final String hintText; // Gợi ý trong TextField
-  final bool isPassword; // Có phải trường mật khẩu hay không
-  final TextEditingController? controller; // Bộ điều khiển TextField
+class MyTextField extends StatefulWidget {
+  final String labelText;
+  final String hintText;
+  final bool isPassword;
+  final TextEditingController? controller;
 
   const MyTextField({
     required this.labelText,
@@ -16,31 +16,81 @@ class MyTextField extends StatelessWidget {
   });
 
   @override
+  State<MyTextField> createState() => _MyTextFieldState();
+}
+
+class _MyTextFieldState extends State<MyTextField> {
+  bool _isEmpty = false;
+
+  void _validate() {
+    setState(() {
+      _isEmpty = widget.controller?.text.trim().isEmpty ?? true;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller?.addListener(_validate);
+  }
+
+  @override
+  void dispose() {
+    widget.controller?.removeListener(_validate);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          labelText,
+          widget.labelText,
           style: const TextStyle(
             color: MyColors.textColor,
             fontSize: 13.0,
             fontWeight: FontWeight.bold,
           ),
         ),
+        const SizedBox(height: 5),
         TextField(
-          controller: controller,
-          obscureText: isPassword, // Hiển thị dấu * nếu là trường mật khẩu
+          controller: widget.controller,
+          obscureText: widget.isPassword,
           decoration: InputDecoration(
-            hintText: hintText,
+            hintText: widget.hintText,
             hintStyle: const TextStyle(color: MyColors.greyColor),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             border: OutlineInputBorder(
               borderRadius: MyRadius.defaultRadius,
-              borderSide: const BorderSide(color: MyColors.textColor),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: MyRadius.defaultRadius,
+              borderSide: BorderSide(
+                color: MyColors.textColor,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: MyRadius.defaultRadius,
+              borderSide: BorderSide(
+                color: MyColors.textColor,
+                width: 2,
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 5),
+        if (_isEmpty)
+          const Padding(
+            padding: EdgeInsets.only(top: 5, left: 4),
+            child: Text(
+              'Bắt buộc*',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.red,
+              ),
+            ),
+          ),
+        const SizedBox(height: 10),
       ],
     );
   }

@@ -1,4 +1,4 @@
-class Product {
+class ProductTest {
   String _id;
   String _name;
   String _description;
@@ -7,7 +7,7 @@ class Product {
   String _imageUrl;
   int _soldCount;
   double _discount = 0.0;
-  Product({
+  ProductTest({
     required String id,
     required String name,
     required String description,
@@ -56,4 +56,17 @@ class Product {
   // Getter và Setter cho discount
   double get discount => _discount;
   set discount(double value) => _discount = value;
+
+  factory ProductTest.fromMap(Map<String, dynamic> map) {
+    return ProductTest(
+      id: map['id'],
+      name: map['name'],
+      description: map['description'],
+      price: map['price'] * 1.0,
+      oldPrice: (map['oldPrice'] ?? 0.0) * 1.0,
+      imageUrl: map['imageUrl'] ?? '',
+      soldCount: map['soldCount'] ?? 0,
+      discount: (map['discount'] ?? 0.0) * 1.0,
+    );
+  }
 }

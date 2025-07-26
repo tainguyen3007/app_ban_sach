@@ -1,109 +1,229 @@
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/data/models/Product.dart';
+import 'package:app_ban_sach/data/datasources/catetgory_service.dart';
+import 'package:app_ban_sach/data/datasources/product_service.dart';
+import 'package:app_ban_sach/data/models/category.dart';
+import 'package:app_ban_sach/data/models/product.dart';
 import 'package:app_ban_sach/features/ui/screens/detail_product_screen.dart';
+import 'package:app_ban_sach/features/ui/widgets/list_tile.dart';
 import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
-  final List<Product> products = [
-    Product(
-      id: '1',
-      name: 'Sgk tâp 1',
-      description: 'Sách gk',
-      price: 25000,
-      oldPrice: 30000,
-      discount: 10,
-      imageUrl: ""
-    ),
-    Product(
-      id: '1',
-      name: 'Sgk tâp 1',
-      description: 'Sách gk',
-      price: 25000,
-      oldPrice: 30000,
-      discount: 10,
-      imageUrl: ""
-    ),
-    Product(
-      id: '1',
-      name: 'Sgk tâp 1',
-      description: 'Sách gk',
-      price: 25000,
-      oldPrice: 30000,
-      discount: 10,
-      imageUrl: ""
-    ),
-    Product(
-      id: '1',
-      name: 'Sgk tâp 1',
-      description: 'Sách gk',
-      price: 25000,
-      oldPrice: 30000,
-      discount: 10,
-      imageUrl: ""
-    ),
-    Product(
-      id: '1',
-      name: 'Sgk tâp 1',
-      description: 'Sách gk',
-      price: 25000,
-      oldPrice: 30000,
-      discount: 10,
-      imageUrl: ""
-    ),
-    Product(
-      id: '1',
-      name: 'Sgk tâp 1',
-      description: 'Sách gk',
-      price: 25000,
-      oldPrice: 30000,
-      discount: 10,
-      imageUrl: ""
-    ),
-    Product(
-      id: '1',
-      name: 'Sgk tâp 1',
-      description: 'Sách gk',
-      price: 25000,
-      oldPrice: 30000,
-      discount: 10,
-      imageUrl: ""
-    ),
-  ];
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  Future<List<Product>> fetchProducts() {
+    return ProductService().getAllProducts();
+  }
+  Future<List<Category>> fetchCategories() {
+    return CategoryService().getAllCategories();
+  }
+  Widget customListTile({
+    required String title,
+    void Function()? onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: ListTile(
+        title: Text(
+          title,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: onTap,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyColors.whiteColor,
-      body: SingleChildScrollView(
-        child: Container(
-          alignment: Alignment.topCenter,
-          child: Column(
-            children: [
-              Image.asset(
-                height: 50,
-                width: 50,
-                fit: BoxFit.scaleDown,
-                'assets/logo_offical.png'),
-              Wrap(
-                children: products.map((product) =>
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => ProductDetailScreen(product: product),
+      appBar: AppBar(
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.category, color: Colors.white), // 🔁 icon tùy chọn
+            onPressed: () => Scaffold.of(context).openDrawer(),     // mở Drawer
+          ),
+        ),
+        backgroundColor: MyColors.primaryColor,
+        title: Row(
+          children: [
+            Expanded(
+              child: Container(
+                height: 44,
+                margin: const EdgeInsets.only(right: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Row(
+                  children: [
+                    const Icon(Icons.search, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: TextField(
+                        controller: TextEditingController(),
+                        decoration: const InputDecoration(
+                          hintText: 'Tìm kiếm',
+                          border: InputBorder.none,
+                          isDense: true,
+                        ),
+                        style: const TextStyle(fontSize: 16),
+                        onSubmitted: (value) {},
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.grey),
+                      onPressed: () => TextEditingController().clear(),
+                      splashRadius: 18,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+      
+      drawer: Drawer(
+        child: Column(
+          children: [
+            Expanded(
+              child: FutureBuilder<List<Category>>(
+                future: fetchCategories(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Lỗi: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('Không có danh mục.'));
+                  }
+
+                  final categories = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      final category = categories[index];
+                      return customListTile(
+                        title: category.name,
+                        onTap: () {
+                          Navigator.pop(context);
+                          // TODO: xử lý khi chọn danh mục
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      body: FutureBuilder<List<Product>>(
+        future: fetchProducts(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Lỗi: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('Không có sản phẩm nào.'));
+          }
+
+          final products = snapshot.data!;
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  height: 50,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.trending_up_rounded, color: MyColors.primaryColor),
+                      const SizedBox(width: 10),
+                      Text(
+                        "Xu hướng hôm nay",
+                        style: TextStyle(
+                          color: MyColors.primaryColor,
+                          fontSize: MyTextStyle.size_24,
+                          fontWeight: MyTextStyle.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 300,
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    itemCount: products.length,
+                    itemBuilder: (context, index) {
+                      final product = products[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ProductDetailScreen(product: product),
+                            ),
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: ProductCard(product: product),
                         ),
                       );
                     },
-                    child: ProductCard(product: product),
-                  )
-                ).toList(),
-              ),
-                
-            ]
-          ),
-        )
-      )
+                  ),
+                ),
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 0.55,
+                  children: products.map((p) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ProductDetailScreen(product: p),
+                          ),
+                        );
+                      },
+                      child: ProductCard(product: p),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
+
