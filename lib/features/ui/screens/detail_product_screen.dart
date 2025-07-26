@@ -338,7 +338,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                   onPressed: () async {
                     // Lấy userId hiện tại từ UserService
                     int userId = await UserService().getCurrentUserId();
-                   final cartItem = Cart(
+                    final cartItem = Cart(
                     userId: userId,
                     productId: widget.product.id!, // Thêm dấu ! nếu chắc chắn id không null
                     quantity: quantity,
