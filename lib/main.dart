@@ -13,7 +13,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Bắt buộc khi dùng async ở main
   await DBHelper.instance.database;
-  await DBHelper.instance.resetDatabase();
   //kiểm tra trạng thái login
   final prefs = await SharedPreferences.getInstance();
   final bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
