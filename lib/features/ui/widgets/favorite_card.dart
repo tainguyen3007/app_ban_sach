@@ -1,13 +1,14 @@
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/data/models/product_test..dart';
+import 'package:app_ban_sach/data/models/favorite_product.dart';
+import 'package:app_ban_sach/data/models/product_test.dart';
 import 'package:flutter/material.dart';
 
 class FavoriteProductCard extends StatelessWidget {
-  ProductTest product;
+  ProductTest item;
   VoidCallback onPressedDelete;
   FavoriteProductCard({
     required this.onPressedDelete,
-    required this.product,
+    required this.item,
     super.key});
 
   @override
@@ -20,7 +21,7 @@ class FavoriteProductCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
             child: Image.asset(
-              product.imageUrl,
+              item.imageUrl,
               width: 60,
               height: 80,
               fit: BoxFit.cover,
@@ -32,14 +33,14 @@ class FavoriteProductCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  product.name,
+                  item.name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(fontWeight: MyTextStyle.bold, fontSize: MyTextStyle.size_13),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  MyTextStyle.formatCurrency(product.price),
+                  MyTextStyle.formatCurrency(item.price),
                   style: TextStyle(
                     color: MyColors.primaryColor,
                     fontWeight: MyTextStyle.bold,
