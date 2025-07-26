@@ -132,7 +132,7 @@ class _CartScreenState extends State<CartScreen> {
 
   Widget _buildTotalSection() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.only(bottom: 20,left: 12,right: 12,top: 10),
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -196,7 +196,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: 'Giỏ hàng', showBackButton: false),
+      appBar: MyAppBar(title: 'Giỏ hàng', showBackButton: true),
       body: Column(
         children: [
           _buildCheckAllRow(),
