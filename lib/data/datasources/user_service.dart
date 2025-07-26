@@ -34,6 +34,18 @@ class UserService {
     }
     return null;
   }
+  Future<User?> getUserById(int id) async {
+    final db = await DBHelper.instance.database;
+    final result = await db.query(
+      tableName,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+    if (result.isNotEmpty) {
+      return User.fromMap(result.first);
+    }
+    return null;
+  }
 
   // Cập nhật user
   Future<int> updateUser(User user) async {
