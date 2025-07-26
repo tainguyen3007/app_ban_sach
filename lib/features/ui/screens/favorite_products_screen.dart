@@ -1,10 +1,12 @@
+import 'package:app_ban_sach/data/datasources/favorite_product_service.dart';
+import 'package:app_ban_sach/data/models/product.dart';
 import 'package:app_ban_sach/features/ui/widgets/favorite_card.dart';
 import 'package:flutter/material.dart';
-import 'package:app_ban_sach/data/models/product_test..dart';
+import 'package:app_ban_sach/data/models/product_test.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
 
 class FavoriteProductsScreen extends StatefulWidget {
-  const FavoriteProductsScreen({Key? key}) : super(key: key);
+  const FavoriteProductsScreen({super.key});
 
   @override
   State<FavoriteProductsScreen> createState() => _FavoriteProductsScreenState();
@@ -12,55 +14,12 @@ class FavoriteProductsScreen extends StatefulWidget {
 
 class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
   // Demo list, replace with your favorite products list from state/provider
-  List<ProductTest> favoriteProducts = [
-    ProductTest(
-      id: '1',
-      name: 'Giáo Trình Triết Học Mác - Lênin (Dành Cho Bậc Đại Học Hệ Không Chuyên Lý Luận Chính Trị)',
-      description: '',
-      imageUrl: 'assets/sgk_tv_2_1.jpg',
-      price: 70000,
-      oldPrice: 0,
-      discount: 0,
-      soldCount: 0,
-    ),
-    ProductTest(
-      id: '2',
-      name: 'Giáo Trình Triết Học Mác - Lênin (Dành Cho Bậc Đại Học Hệ Không Chuyên Lý Luận Chính Trị)',
-      description: '',
-      imageUrl: 'assets/sgk_tv_2_1.jpg',
-      price: 70000,
-      oldPrice: 0,
-      discount: 0,
-      soldCount: 0,
-    ),
-    ProductTest(
-      id: '3',
-      name: 'Giáo Trình Triết Học Mác - Lênin (Dành Cho Bậc Đại Học Hệ Không Chuyên Lý Luận Chính Trị)',
-      description: '',
-      imageUrl: 'assets/sgk_tv_2_1.jpg',
-      price: 70000,
-      oldPrice: 0,
-      discount: 0,
-      soldCount: 0,
-    ),
-    ProductTest(
-      id: '4',
-      name: 'Giáo Trình Triết Học Mác - Lênin (Dành Cho Bậc Đại Học Hệ Không Chuyên Lý Luận Chính Trị)',
-      description: '',
-      imageUrl: 'assets/sgk_tv_2_1.jpg',
-      price: 70000,
-      oldPrice: 0,
-      discount: 0,
-      soldCount: 0,
-    ),
-  ];
-
+  List<ProductTest> favoriteProducts = [];
   void removeFromFavorite(int index) {
     setState(() {
       favoriteProducts.removeAt(index);
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,75 +31,20 @@ class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: ListView.separated(
+      body: favoriteProducts.isEmpty ? 
+      Center(
+        child: const Text("Bạn chưa thêm sản phẩm yêu thích nào"),
+      )
+      :ListView.separated(
         itemCount: favoriteProducts.length,
         separatorBuilder: (context, index) => const Divider(height: 1),
         itemBuilder: (context, index) {
           final product = favoriteProducts[index];
-          return FavoriteProductCard(onPressedDelete: () => removeFromFavorite(index), product: product);
-          // Padding(
-          //   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          //   child: Row(
-          //     crossAxisAlignment: CrossAxisAlignment.start,
-          //     children: [
-          //       ClipRRect(
-          //         borderRadius: BorderRadius.circular(6),
-          //         child: Image.asset(
-          //           product.imageUrl,
-          //           width: 60,
-          //           height: 80,
-          //           fit: BoxFit.cover,
-          //         ),
-          //       ),
-          //       const SizedBox(width: 12),
-          //       Expanded(
-          //         child: Column(
-          //           crossAxisAlignment: CrossAxisAlignment.start,
-          //           children: [
-          //             Text(
-          //               product.name,
-          //               maxLines: 2,
-          //               overflow: TextOverflow.ellipsis,
-          //               style: TextStyle(fontWeight: MyTextStyle.bold, fontSize: MyTextStyle.size_13),
-          //             ),
-          //             const SizedBox(height: 8),
-          //             Text(
-          //               MyTextStyle.formatCurrency(product.price),
-          //               style: TextStyle(
-          //                 color: MyColors.primaryColor,
-          //                 fontWeight: MyTextStyle.bold,
-          //                 fontSize: MyTextStyle.size_13,
-          //               ),
-          //             ),
-          //             const SizedBox(height: 8),
-          //             SizedBox(
-          //               width: 100,
-          //               height: 36,
-          //               child: OutlinedButton(
-          //                 onPressed: () {
-          //                   ScaffoldMessenger.of(context).showSnackBar(
-          //                     const SnackBar(content: Text('Đã thêm vào giỏ hàng!')),
-          //                   );
-          //                 },
-          //                 style: OutlinedButton.styleFrom(
-          //                   foregroundColor: MyColors.primaryColor,
-          //                   side: const BorderSide(color: MyColors.primaryColor),
-          //                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          //                 ),
-          //                 child: const Text('Mua', style: TextStyle(fontWeight: MyTextStyle.bold)),
-          //               ),
-          //             ),
-          //           ],
-          //         ),
-          //       ),
-          //       IconButton(
-          //         icon: const Icon(Icons.delete_outline, color: MyColors.errorColor),
-          //         onPressed: () => removeFromFavorite(index),
-          //         tooltip: 'Xóa khỏi yêu thích',
-          //       ),
-          //     ],
-          //   ),
-          // );
+          return 
+          FavoriteProductCard(
+            onPressedDelete: () => removeFromFavorite(index), 
+            item: product,
+          );
         },
       ),
     );
