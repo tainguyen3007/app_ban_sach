@@ -3,7 +3,7 @@ import 'package:app_ban_sach/data/datasources/product_service.dart';
 import 'package:app_ban_sach/data/models/product.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ban_sach/data/models/cart.dart';
-import 'package:app_ban_sach/data/models/product_test..dart';
+import 'package:app_ban_sach/data/models/product_test.dart';
 import 'package:app_ban_sach/features/ui/screens/home_screen.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart';
@@ -17,7 +17,7 @@ import 'package:app_ban_sach/data/datasources/user_service.dart';
 /// Màn hình chi tiết sản phẩm
 class ProductDetailScreen extends StatefulWidget {
   final Product product;
-  const ProductDetailScreen({Key? key, required this.product}) : super(key: key);
+  const ProductDetailScreen({super.key, required this.product});
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
@@ -140,7 +140,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           aspectRatio: 1,
           child: (widget.product.imageUrl.isNotEmpty)
               ? Image.asset(widget.product.imageUrl, fit: BoxFit.contain)
-              : Image.asset('assets/sgk_tv_2_1.jpg', fit: BoxFit.contain),
+              : Image.asset('assets/default_images/default_image.png', fit: BoxFit.contain),
         ),
       ),
     );
@@ -302,39 +302,39 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       children: [
         Container(
           color: MyColors.whiteColor,
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-          child: Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(6),
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Expanded(
+            child: Row(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove, size: 16),
+                        onPressed: () {
+                          setState(() {
+                            if (quantity > 1) quantity--;
+                          });
+                        },
+                      ),
+                      Text('$quantity', style: const TextStyle(fontSize: 16)),
+                      IconButton(
+                        icon: const Icon(Icons.add, size: 16),
+                        onPressed: () {
+                          setState(() {
+                            quantity++;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.remove, size: 16),
-                      onPressed: () {
-                        setState(() {
-                          if (quantity > 1) quantity--;
-                        });
-                      },
-                    ),
-                    Text('$quantity', style: const TextStyle(fontSize: 16)),
-                    IconButton(
-                      icon: const Icon(Icons.add, size: 16),
-                      onPressed: () {
-                        setState(() {
-                          quantity++;
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 5),
-              Expanded(
-                child: ElevatedButton(
+                const SizedBox(width: 5),
+                ElevatedButton(
                   onPressed: () async {
                     // Lấy userId hiện tại từ UserService
                     int userId = await UserService().getCurrentUserId();
@@ -343,10 +343,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     productId: widget.product.id!, // Thêm dấu ! nếu chắc chắn id không null
                     quantity: quantity,
                   );
-                    await CartService().insertCart(cartItem);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Đã thêm vào giỏ hàng!')),
-                    );
+                  await CartService().insertCart(cartItem);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Đã thêm vào giỏ hàng!')),
+                  );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -357,29 +357,33 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text('Thêm vào giỏ hàng', style: TextStyle(fontSize: MyTextStyle.size_13, fontWeight: MyTextStyle.bold)),
-                ),
-              ),
-              const SizedBox(width: 5),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Mua ngay!')),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: MyColors.primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: const Text('Thêm vào giỏ hàng', style: TextStyle(fontSize: MyTextStyle.size_13, fontWeight: MyTextStyle.bold)),
                   ),
-                  child: const Text('Mua ngay', style: TextStyle(fontSize: MyTextStyle.size_13, fontWeight: MyTextStyle.bold)),
+                  
                 ),
-              ),
-            ],
+                const SizedBox(width: 5),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Mua ngay!')),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: MyColors.primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text('Mua ngay', style: TextStyle(fontSize: MyTextStyle.size_13, fontWeight: MyTextStyle.bold)),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         Container(
@@ -389,7 +393,6 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
       ],
     );
   }
-  // ...existing code...
 }
 
 /// Widget hiển thị danh sách sản phẩm gợi ý
@@ -420,12 +423,13 @@ class SuggestionSection extends StatelessWidget {
 void showWarrantyPolicy(BuildContext context) {
   showModalBottomSheet(
     context: context,
+    isScrollControlled: true,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(0)),
     ),
     builder: (context) {
       return Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
