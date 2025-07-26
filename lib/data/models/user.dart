@@ -18,7 +18,7 @@ class User {
     this.gender = 1,
     required this.phoneNumber,
     this.role = 'user',
-    this.avatar = 'assets/default-avatar.png',
+    this.avatar = 'assets/default_images/default_avatar.jpg',
   });
 
   // Tạo User từ Map (SQLite row)
@@ -32,7 +32,7 @@ class User {
       gender: map['gender'] ?? 1,
       phoneNumber: map['phoneNumber'],
       role: map['role'] ?? 'user',
-      avatar: map['avatar'] ?? 'assets/default-avatar.png',
+      avatar: map['avatar'] ?? 'assets/default_images/default_avatar.jpg',
     );
   }
 
