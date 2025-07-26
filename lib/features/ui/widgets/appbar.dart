@@ -40,41 +40,48 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
             )
           : null,
       actions:[
-        showSearchField ?
-          Expanded(
-            child: Container(
-              height: 44,
-              margin: const EdgeInsets.only(right: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                children: [
-                  const Icon(Icons.search, color: Colors.grey),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: TextField(
-                      controller: searchController,
-                      decoration: const InputDecoration(
-                        hintText: 'Tìm kiếm',
-                        border: InputBorder.none,
-                        isDense: true,
+        Row(
+          children: [
+            showSearchField ?
+              Expanded(
+                child: Container(
+                  height: 44,
+                  margin: const EdgeInsets.only(right: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.search, color: Colors.grey),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextField(
+                          controller: searchController,
+                          decoration: const InputDecoration(
+                            hintText: 'Tìm kiếm',
+                            border: InputBorder.none,
+                            isDense: true,
+                          ),
+                          style: const TextStyle(fontSize: 16),
+                          onSubmitted: (value) {},
+                        ),
                       ),
-                      style: const TextStyle(fontSize: 16),
-                      onSubmitted: (value) {},
-                    ),
+                      IconButton(
+                        icon: const Icon(Icons.close, color: Colors.grey),
+                        onPressed: () => searchController.clear(),
+                        splashRadius: 18,
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.close, color: Colors.grey),
-                    onPressed: () => searchController.clear(),
-                    splashRadius: 18,
-                  ),
-                ],
-              ),
-            ),
-          ) : SizedBox.shrink()
+                ),
+              ) : SizedBox.shrink(),
+              Row(
+                children: actions ??[],
+              )
+          ],
+        ),
       ],
     );
   }
