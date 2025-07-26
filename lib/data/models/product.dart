@@ -17,7 +17,7 @@ class Product {
     this.oldprice = 0,
     this.discount = 0,
     this.soldCount = 9,
-    this.imageUrl = 'https://example.com/images/default.jpg',
+    this.imageUrl = 'assets/default_images/default_image.png',
     this.categoryId,
   });
 
@@ -30,7 +30,7 @@ class Product {
       price: map['price'] is int ? (map['price'] as int).toDouble() : map['price'],
       oldprice: map['oldprice'] is int ? (map['oldprice'] as int).toDouble() : map['oldprice'],
       discount: map['discount'] is int ? (map['discount'] as int).toDouble() : map['discount'],
-      imageUrl: map['imageUrl'] ?? '',
+      imageUrl: map['imageUrl'] ?? 'assets/default_images/default_image.png',
       categoryId: map['categoryId'],
     );
   }
