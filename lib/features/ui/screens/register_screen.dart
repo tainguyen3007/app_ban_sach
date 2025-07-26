@@ -1,4 +1,6 @@
 import 'package:app_ban_sach/core/constants/style.dart';
+import 'package:app_ban_sach/data/datasources/user_service.dart';
+import 'package:app_ban_sach/data/models/user.dart';
 import 'package:app_ban_sach/features/ui/screens/user_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/button.dart';
@@ -16,11 +18,63 @@ class _LoginState extends State<RegisterScreen> {
   //
   final double paddingHorizontal = 5.0;
 
-  TextEditingController userController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController passController = TextEditingController();
   TextEditingController passConfirmController = TextEditingController();
+
+  Future<void> _onClickRegister() async {
+    final email = emailController.text.trim();
+    final name = nameController.text.trim();
+    final phone = phoneNumberController.text.trim();
+    final pass = passController.text.trim();
+    final passConfirm = passConfirmController.text.trim();
+
+    if (email.isEmpty || phone.isEmpty || pass.isEmpty || passConfirm.isEmpty || name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng điền đầy đủ thông tin.')),
+      );
+      return;
+    }
+
+    if (pass != passConfirm) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Mật khẩu xác nhận không khớp!')),
+      );
+      return;
+    }
+
+    // Kiểm tra email đã tồn tại chưa
+    final existingUser = await UserService().getUserByEmail(email);
+    if (existingUser != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Email đã tồn tại!')),
+      );
+      return;
+    }
+
+    // Tạo user mới
+    User user = User(
+      email: email,
+      password: pass,
+      name: name,
+      phoneNumber: phone,
+    );
+
+    await UserService().insertUser(user);
+
+    // Thông báo & chuyển sang trang user/profile
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Đăng ký thành công!')),
+    );
+
+    // Có thể điều hướng về màn hình đăng nhập hoặc trang người dùng
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => UserScreen(user: user)),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +98,9 @@ class _LoginState extends State<RegisterScreen> {
                   ),
                 SizedBox(height: paddingHorizontal),
                 MyTextField(
-                  labelText: 'Username',
-                  hintText: 'Nhập username',
-                  controller: userController,
+                  labelText: 'Email',
+                  hintText: 'Nhập email',
+                  controller: emailController,
                   isPassword: false,
                 ),
                 MyTextField(
@@ -78,11 +132,7 @@ class _LoginState extends State<RegisterScreen> {
                 ),
                 SizedBox(height: 10,),
                 MyButton(text: 'Đăng ký tài khoản', 
-                  onPressed: () async {
-                    setState(() {
-                      
-                    });
-                  },
+                  onPressed: _onClickRegister,
                 ),
               ],
             ),
