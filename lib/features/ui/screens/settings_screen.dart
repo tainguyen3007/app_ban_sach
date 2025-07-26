@@ -1,11 +1,13 @@
+import 'package:app_ban_sach/main.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/features/ui/screens/change_password_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/login_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -172,11 +174,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _handleLogout() {
+  void _handleLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
-      (route) => false,
-    );
+      MaterialPageRoute(builder: (_) => const MainScreen(isLoggedIn: false,)), (route)=> false);
   }
 }
 
