@@ -1,16 +1,12 @@
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/data/datasources/user_service.dart';
 import 'package:app_ban_sach/features/ui/screens/register_screen.dart';
-import 'package:app_ban_sach/features/ui/screens/user_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/button.dart';
 import 'package:app_ban_sach/features/ui/widgets/text_field.dart';
 import 'package:app_ban_sach/main.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-const List<String> scopes = <String>[
-  'https://www.googleapis.com/auth/contacts.readonly',
-];
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -40,11 +36,12 @@ class _LoginState extends State<LoginScreen> {
       final isLoggedIn = await prefs.setBool('isLoggedIn', true);
       await prefs.setInt('userId', user.id ?? 0);
       // Chuyển sang UserScreen
-      Navigator.push(
+      Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-          builder: (_) => MainScreen(isLoggedIn: isLoggedIn, indexPage: 3,user: user,),
+          builder: (_) => MainScreen(isLoggedIn: isLoggedIn, indexPage: 3,user: user,)
         ),
+        (route) => false,
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -52,15 +49,10 @@ class _LoginState extends State<LoginScreen> {
       );
     }
   }
-  Future<void> _login(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', true);
-    await prefs.setInt('userId', 1); // giả lập userId = 1
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: 'Đăng nhập'),
+      appBar: MyAppBar(title: 'Đăng nhập',showBackButton: false,),
       body: SingleChildScrollView(
         child: Container(  
           color: MyColors.whiteColor,
