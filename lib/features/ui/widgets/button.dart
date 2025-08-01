@@ -20,7 +20,6 @@ class MyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      
       onPressed: isDisabled ? null : onPressed, // Nếu nút bị vô hiệu hóa thì không làm gì
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
@@ -33,6 +32,7 @@ class MyButton extends StatelessWidget {
         side: isOutlined
             ? BorderSide(color: MyColors.primaryColor, width: 1) // Viền cho nút outline
             : BorderSide.none, // Không có viền cho nút thường
+        
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

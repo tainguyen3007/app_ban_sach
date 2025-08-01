@@ -31,9 +31,10 @@ class _UserProfileState extends State<UserProfile> {
             onTap: widget.onPressed,
             leading: CircleAvatar(
               radius: 30,
-              backgroundImage: AssetImage(widget.avatar),
+              backgroundImage: widget.avatar.contains('assets') ? AssetImage(widget.avatar) : NetworkImage(widget.avatar),
             ),
             title: Text(
+              maxLines: 1,
               widget.username, // username
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),

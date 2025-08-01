@@ -1,7 +1,5 @@
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/data/models/product.dart';
-import 'package:app_ban_sach/data/models/product_test.dart';
-import 'package:flutter/foundation.dart';
+import 'package:app_ban_sach/firebase_cloud/models/product.dart';
 import 'package:flutter/material.dart';
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -99,7 +97,7 @@ class ProductCard extends StatelessWidget {
                   const SizedBox(height: 4),
       
                   // Giá gốc
-                  if (product.oldprice > 0)
+                  product.oldprice > 0 ?
                     Text(
                       MyTextStyle.formatCurrency(product.oldprice),
                       style: const TextStyle(
@@ -107,8 +105,8 @@ class ProductCard extends StatelessWidget {
                         color: Colors.grey,
                         decoration: TextDecoration.lineThrough,
                       ),
-                    ),
-      
+                    )
+                    : Text(" "),
                   const SizedBox(height: 6),
       
                   // Số lượng đã bán

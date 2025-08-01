@@ -1,3 +1,4 @@
+import 'package:app_ban_sach/data/datasources/auth.service.dart';
 import 'package:app_ban_sach/main.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
@@ -5,6 +6,8 @@ import 'package:app_ban_sach/features/ui/screens/change_password_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/login_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:app_ban_sach/data/datasources/auth.service.dart';
+
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -131,7 +134,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             backgroundColor: Colors.white,
           ),
-          onPressed: _handleLogout,
+          onPressed: _onClickLogout,
         ),
       ),
     );
@@ -174,12 +177,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  void _handleLogout() async {
+  void _onClickLogout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
+    await AuthService().signOut();
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (_) => const MainScreen(isLoggedIn: false,)), (route)=> false);
-  }
+    }
+    
 }
 
 class _SectionTitle extends StatelessWidget {

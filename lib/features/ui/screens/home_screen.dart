@@ -1,10 +1,10 @@
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/data/datasources/catetgory_service.dart';
-import 'package:app_ban_sach/data/datasources/product_service.dart';
+import 'package:app_ban_sach/features/ui/widgets/button.dart';
+import 'package:app_ban_sach/firebase_cloud/models/product.dart';
+import 'package:app_ban_sach/firebase_cloud/service/product_service.dart';
 import 'package:app_ban_sach/data/models/category.dart';
-import 'package:app_ban_sach/data/models/product.dart';
 import 'package:app_ban_sach/features/ui/screens/detail_product_screen.dart';
-import 'package:app_ban_sach/features/ui/widgets/list_tile.dart';
 import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Future<List<Product>> fetchProducts() {
-    return ProductService().getAllProducts();
+    return ProductService.getAllProducts();
   }
   Future<List<Category>> fetchCategories() {
     return CategoryService().getAllCategories();
@@ -173,27 +173,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SizedBox(
                   height: 300,
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    itemCount: products.length,
-                    itemBuilder: (context, index) {
-                      final product = products[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => ProductDetailScreen(product: product),
-                            ),
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 10),
-                          child: ProductCard(product: product),
-                        ),
-                      );
+                  child: _buildListViewProductsByCategory(products, 6),
+                ),
+                SizedBox(
+                  width: 200,
+                  child: MyButton(
+                    text: "Xem thêm",
+                    isOutlined: true,
+                    onPressed: (){
+                      
                     },
                   ),
                 ),
@@ -226,4 +214,32 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
+Widget _buildListViewProductsByCategory(List<Product> products, int maxCount){
+  return ListView.builder(
+    shrinkWrap: true,
+    scrollDirection: Axis.horizontal,
+    padding: const EdgeInsets.symmetric(horizontal: 10),
+    itemCount: products.length >= maxCount ? maxCount : products.length,
+    itemBuilder: (context, index) {
+      final product = products[index];
+      return GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ProductDetailScreen(product: product),
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: Column(
+            children: [
+              ProductCard(product: product),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
