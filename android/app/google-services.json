@@ -1,34 +1,50 @@
 {
   "project_info": {
-    "project_number": "201412427115",
-    "project_id": "app-ban-sach-ceaa3",
-    "storage_bucket": "app-ban-sach-ceaa3.firebasestorage.app"
+    "project_number": "17028746781",
+    "firebase_url": "https://bansachappflutter-default-rtdb.firebaseio.com",
+    "project_id": "bansachappflutter",
+    "storage_bucket": "bansachappflutter.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:201412427115:android:e67b0dc344fcd36acb202e",
+        "mobilesdk_app_id": "1:17028746781:android:82cdccc984b9ac978fc0f4",
         "android_client_info": {
           "package_name": "com.huflit.bansach"
         }
       },
       "oauth_client": [
         {
-          "client_id": "201412427115-kmnoda3gfsccgf6df29prcrrsesfk0th.apps.googleusercontent.com",
+          "client_id": "17028746781-6vja38487dohlpi16gvtjtlt9tlvd1kp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.huflit.bansach",
+            "certificate_hash": "8a08283ef4d06e81267964922c4ab09e92eb0430"
+          }
+        },
+        {
+          "client_id": "17028746781-937avhmc8gauvfrdc3rcbdgh8dappctv.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBrlcSaPS00HXCX42NfNrGWcfNfV159S0Y"
+          "current_key": "AIzaSyDRORBDFBMTc-pj6xe_RAXRFP-DkhMZMOc"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "201412427115-kmnoda3gfsccgf6df29prcrrsesfk0th.apps.googleusercontent.com",
+              "client_id": "17028746781-937avhmc8gauvfrdc3rcbdgh8dappctv.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "17028746781-11i2qt9dimaq4en4ohvbi12u381rtjhf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.appBanSach"
+              }
             }
           ]
         }
