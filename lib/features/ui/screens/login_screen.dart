@@ -1,10 +1,14 @@
+
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/data/datasources/user_service.dart';
+import 'package:app_ban_sach/firebase_cloud/models/user.dart' as userFB;
+import 'package:app_ban_sach/data/datasources/auth.service.dart';
+import 'package:app_ban_sach/firebase_cloud/service/user_service.dart';
 import 'package:app_ban_sach/features/ui/screens/register_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/button.dart';
 import 'package:app_ban_sach/features/ui/widgets/text_field.dart';
 import 'package:app_ban_sach/main.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class LoginScreen extends StatefulWidget {
@@ -19,6 +23,56 @@ class _LoginState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
 
   final double paddingHorizontal = 5.0;
+
+  auth.User? user;
+  
+  void login() async {
+  final auth.User? currentUser = await AuthService().signInWithGoogle();
+
+  if (currentUser != null) {
+    // ✅ Đăng nhập thành công
+      user = currentUser;
+      final prefs = await SharedPreferences.getInstance();
+      final isLoggedIn = await prefs.setBool('isLoggedIn', true);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Đăng nhập thành công")),
+      );
+
+      final authUser = userFB.User(
+        email: user?.email ?? 'guest@gmail.com', 
+        name: user?.displayName,
+        password: '', 
+        phoneNumber: user?.phoneNumber ?? "No phone number",
+        avatar: user?.photoURL??"assets/default_images/default_avatar.jpg");
+      await UserService.saveUser(authUser);
+      
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MainScreen(isLoggedIn: isLoggedIn, indexPage: 3,) 
+        ),
+        (route) => false,
+      );
+
+      
+    // Có thể hiện Snackbar, toast hoặc chuyển trang
+    
+
+  } else {
+    // ❌ Đăng nhập thất bại hoặc người dùng bấm Cancel
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Đăng nhập thất bại hoặc bị hủy")),
+    );
+  }
+}
+
+  void logout() async {
+    await AuthService().signOut();
+    setState(() {
+      user = null;
+    });
+  }
   Future<void> _onClickLogin() async {
     final email = phoneController.text.trim(); // hoặc dùng email nếu app bạn login bằng email
     final password = passwordController.text.trim();
@@ -30,24 +84,7 @@ class _LoginState extends State<LoginScreen> {
       return;
     }
 
-    final user = await UserService().login(email, password);
-    if (user != null) {
-      final prefs = await SharedPreferences.getInstance();
-      final isLoggedIn = await prefs.setBool('isLoggedIn', true);
-      await prefs.setInt('userId', user.id ?? 0);
-      // Chuyển sang UserScreen
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MainScreen(isLoggedIn: isLoggedIn, indexPage: 3,user: user,)
-        ),
-        (route) => false,
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sai thông tin đăng nhập')),
-      );
-    }
+
   }
   @override
   Widget build(BuildContext context) {
@@ -151,9 +188,7 @@ class _LoginState extends State<LoginScreen> {
                   imagePath: 'assets/google_logo.jpg', // Đường dẫn hình ảnh
                   isOutlined: true, //nút outline
                   isDisabled: false, // nút bị vô hiêu hóa
-                  onPressed: () async {
-                    
-                  },
+                  onPressed: login,
                 ),
               ],
             ),
