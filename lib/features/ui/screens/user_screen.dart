@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:app_ban_sach/core/constants/style.dart';
+import 'package:app_ban_sach/data/datasources/auth.service.dart';
 import 'package:app_ban_sach/data/models/product_test.dart';
 import 'package:app_ban_sach/data/models/user.dart';
 import 'package:app_ban_sach/features/ui/screens/detail_user_screen.dart';
@@ -8,7 +9,6 @@ import 'package:app_ban_sach/features/ui/screens/login_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/order_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/voucher_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
-import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart';
 import 'package:app_ban_sach/features/ui/widgets/list_tile.dart';
 import 'package:app_ban_sach/features/ui/widgets/order_status_tab.dart';
 import 'package:app_ban_sach/features/ui/widgets/user_profile.dart';
@@ -26,7 +26,9 @@ class UserScreen extends StatefulWidget {
 
 class _UserScreenState extends State<UserScreen> {
   final List<ProductTest> products = [];
-  
+  //Gọi thuộc tính của user google(name, email, hình ảnh)
+  final info = AuthService().getCurrentUserInfo();
+
   @override
   Widget build(BuildContext context) {
     return widget.isLoggedIn == false 
@@ -54,17 +56,26 @@ class _UserScreenState extends State<UserScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              widget.user == null? 
+              // widget.user == null? 
+              // UserProfile(
+              //   name: widget.user?.name ?? "Khách" ,
+              //   username: widget.user?.email ?? "Đang là khách",
+              //   onPressed: () => {
+              //     Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()))
+              //   },
+              // ):
+              // UserProfile(
+              //   name: widget.user?.name?? "khahc1",
+              //   username: widget.user?.email ?? "Đang là khách",
+              //   onPressed: () => {
+              //     Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()))
+              //   },
+              // )
+              
               UserProfile(
-                name: widget.user?.name ?? "Khách" ,
-                username: widget.user?.email ?? "Đang là khách",
-                onPressed: () => {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()))
-                },
-              ):
-              UserProfile(
-                name: widget.user?.name?? "khahc1",
-                username: widget.user?.email ?? "Đang là khách",
+                avatar: info['photoURL'].toString(),
+                name: info['name'].toString(),
+                username: info['email'].toString(),
                 onPressed: () => {
                   Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()))
                 },
