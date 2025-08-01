@@ -1,15 +1,11 @@
 
-import 'package:app_ban_sach/data/datasources/product_service.dart';
-import 'package:app_ban_sach/data/models/product.dart';
+import 'package:app_ban_sach/firebase_cloud/models/product.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ban_sach/data/models/cart.dart';
-import 'package:app_ban_sach/data/models/product_test.dart';
 import 'package:app_ban_sach/features/ui/screens/home_screen.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart';
 import 'package:app_ban_sach/features/ui/screens/search_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/user_screen.dart';
-import 'package:app_ban_sach/features/ui/screens/order_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/cart_screen.dart';
 import 'package:app_ban_sach/data/datasources/cart_service.dart';
 import 'package:app_ban_sach/data/datasources/user_service.dart';
@@ -340,10 +336,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     int userId = await UserService().getCurrentUserId();
                     final cartItem = Cart(
                     userId: userId,
-                    productId: widget.product.id!, // Thêm dấu ! nếu chắc chắn id không null
+                    productId: int.parse(widget.product.id!), // Thêm dấu ! nếu chắc chắn id không null
                     quantity: quantity,
-                  );
-                  await CartService().insertCart(cartItem);
+                    );
+                    await CartService().insertCart(cartItem);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Đã thêm vào giỏ hàng!')),
                   );
@@ -403,18 +399,18 @@ class SuggestionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      children: products.map((product) =>
-        GestureDetector(
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => ProductDetailScreen(product: product),
-              ),
-            );
-          },
-          child: ProductCard(product: product),
-        )
-      ).toList(),
+      // children: products.map((product) =>
+      //   GestureDetector(
+      //     onTap: () {
+      //       Navigator.of(context).push(
+      //         MaterialPageRoute(
+      //           builder: (context) => ProductDetailScreen(product: product),
+      //         ),
+      //       );
+      //     },
+      //     child: ProductCard(product: product),
+      //   )
+      // ).toList(),
     );
   }
 }
