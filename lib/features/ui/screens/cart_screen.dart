@@ -1,3 +1,4 @@
+import 'package:app_ban_sach/features/ui/screens/payment/payment_screen_1.dart';
 import 'package:app_ban_sach/firebase_cloud/service/cart_service.dart';
 import 'package:app_ban_sach/firebase_cloud/service/product_service.dart';
 import 'package:app_ban_sach/firebase_cloud/service/user_service.dart';
@@ -16,6 +17,46 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   double totalPriceSelected = 0;
   List<CartItemWithProduct> displayItems = [];
+  bool _isLoading = true;
+  bool _isError = false;
+  bool _isAllChecked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCartItems();
+
+  }
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<void> _loadCartItems() async {
+    setState(() {
+      _isLoading = true;
+      _isError = false;
+    });
+
+    try {
+      final items = await CartService.getCartWithProductByUser(widget.userId);
+
+      setState(() {
+        displayItems = items;
+        _updateTotalPrice(items);
+        _isAllChecked = items.isNotEmpty && items.every((item) => item.cart.isChecked);
+        _isLoading = false;
+      });
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isError = true;
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   void _updateTotalPrice(List<CartItemWithProduct> items) {
     double total = 0;
     for (var item in items) {
@@ -28,66 +69,108 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
-  void _toggleItemCheck(int index, bool? value) {
+  void _toggleItemCheck(int index, bool? value) async {
     final item = displayItems[index];
     item.cart.isChecked = value ?? false;
 
     setState(() {
       displayItems[index] = item;
+
+      //  Cập nhật tổng tiền
+      _updateTotalPrice(displayItems);
+
+      //  Kiểm tra nếu tất cả đều được chọn thì set _isAllChecked = true
+      _isAllChecked = 
+        displayItems.isNotEmpty 
+        && displayItems.every((item) => item.cart.isChecked);
+    });
+
+    //  Cập nhật trạng thái mới lên Firebase
+    await CartService.updateCart(item.cart);
+  }
+
+  void _toggleCheckAll(bool value) async {
+    setState(() {
+      _isAllChecked = value;
+      for (var item in displayItems) {
+        item.cart.isChecked = value;
+      }
       _updateTotalPrice(displayItems);
     });
-      
+
+    // cập nhật tất cả lên Firestore
+    for (var item in displayItems) {
+      await CartService.updateCart(item.cart);
+    }
+  }
+  void _removeItem(int index) async {
+    final item = displayItems[index];
+    await CartService.deleteCart(item.cart.id!);
+    setState(() {
+      displayItems.removeAt(index);
+      _updateTotalPrice(displayItems);
+      _isAllChecked = displayItems.isNotEmpty &&
+                      displayItems.every((item) => item.cart.isChecked);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(title: "Giỏ hàng", showBackButton: false),
-      body: FutureBuilder<List<CartItemWithProduct>>(
-        future: CartService.getCartWithProductByUser(widget.userId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.hasError) {
-            return const Center(child: Text('Đã có lỗi xảy ra'));
-          }
-
-          displayItems = snapshot.data ?? [];
-
-          if (displayItems.isEmpty) {
-            return const Center(child: Text('Giỏ hàng trống'));
-          }
-          
-          return Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(8),
-                  itemCount: displayItems.length,
-                  itemBuilder: (context, index) {
-                    final item = displayItems[index];
-
-                    return CartProductCard(
-                      item: item,
-                      onChanged: (isChecked) => _toggleItemCheck(index, isChecked),
-                      onRemove: () async {
-                        await CartService.deleteCart(item.cart.id!);
-                        setState(() {
-                          displayItems.removeAt(index);
-                        });
-                        _updateTotalPrice(displayItems);
-                      },
-                    );
-                  },
-                ),
-              ),
-              _buildTotalSection(),
-            ],
-          );
-        },
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _isError
+              ? const Center(child: Text('Đã có lỗi xảy ra'))
+              : displayItems.isEmpty
+                  ? const Center(child: Text('Giỏ hàng trống'))
+                  : Column(
+                      children: [
+                        //  Check all
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          child: Row(
+                            children: [
+                              Checkbox(
+                                value: _isAllChecked,
+                                onChanged: (value) {
+                                  _toggleCheckAll(value ?? false);
+                                },
+                                activeColor: MyColors.warningColor,
+                              ),
+                              const Text(
+                                'Chọn tất cả',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            padding: const EdgeInsets.all(8),
+                            itemCount: displayItems.length,
+                            itemBuilder: (context, index) {
+                              final item = displayItems[index];
+                              return CartProductCard(
+                                item: item,
+                                onChanged: (isChecked) =>
+                                    _toggleItemCheck(index, isChecked),
+                                onRemove: () => _removeItem(index),
+                                onQuantityChanged: (){
+                                  setState(() {
+                                    _updateTotalPrice(displayItems);
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                        _buildTotalSection(),
+                      ],
+                    ),
     );
   }
 
@@ -137,9 +220,13 @@ class _CartScreenState extends State<CartScreen> {
               ),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             ),
-            onPressed: () {
-              // TODO: xử lý thanh toán
-            },
+            onPressed: totalPriceSelected > 0 ?
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PaymentScreen1(currentStep: 1,)),
+              );
+            }:null,
             icon: const Icon(Icons.arrow_forward, color: Colors.white),
             label: const Text(
               'Thanh toán',
