@@ -28,7 +28,7 @@ class Cart {
       'userId': userId,
       'productId': productId,
       'quantity': quantity,
-      'isChecked': isChecked,
+      'isChecked': isChecked
     };
   }
 }
