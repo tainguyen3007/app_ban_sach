@@ -36,7 +36,7 @@ class _UserProfileState extends State<UserProfile> {
             title: Text(
               maxLines: 1,
               widget.username, // username
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
               widget.name,

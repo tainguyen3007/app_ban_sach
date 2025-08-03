@@ -1,31 +1,10 @@
+import 'package:app_ban_sach/firebase_cloud/service/cart_service.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/data/datasources/cart_service.dart';
-
-class CartItem {
-  int? id;
-  String imageUrl;
-  String productName;
-  double price;
-  double totalPrice;
-  double oldPrice;
-  bool isChecked;
-  int quantity;
-
-  CartItem({
-    this.id,
-    required this.imageUrl,
-    required this.productName,
-    required this.price,
-    required this.oldPrice,
-    this.isChecked = false,
-    required this.quantity,
-  }) : totalPrice = price * quantity;
-}
 
 class CartProductCard extends StatefulWidget {
-  final CartItem item;
-  final ValueChanged<bool?> onChanged;
+  final CartItemWithProduct item;
+  final ValueChanged<bool?>? onChanged;
   final VoidCallback? onRemove;
 
   const CartProductCard({
@@ -41,13 +20,12 @@ class CartProductCard extends StatefulWidget {
 
 class _CartProductCardState extends State<CartProductCard> {
   late int quantity;
-
-  double get totalPrice => widget.item.price * quantity;
+  double get totalPrice => widget.item.product.price * quantity;
 
   @override
   void initState() {
     super.initState();
-    quantity = widget.item.quantity;
+    quantity = widget.item.cart.quantity;
   }
 
   Future<void> _updateQuantity(int change) async {
@@ -56,24 +34,14 @@ class _CartProductCardState extends State<CartProductCard> {
 
     setState(() {
       quantity = newQuantity;
-      widget.item.quantity = quantity;
-      widget.item.totalPrice = totalPrice;
+      widget.item.cart.quantity = quantity;
     });
 
-    if (widget.item.id != null) {
-      await CartService().updateCart(widget.item.id!, quantity);
+    if (widget.item.cart.id != null) {
+      await CartService.insertCart(widget.item.cart);
     }
   }
 
-  Future<void> _removeItem() async {
-    if (widget.item.id != null) {
-      await CartService().deleteCartItem(widget.item.id!);
-      widget.onRemove?.call();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Đã xóa sản phẩm khỏi giỏ hàng')),
-      );
-    }
-  }
 
   Widget _buildQuantityControl() {
     return Row(
@@ -123,7 +91,7 @@ class _CartProductCardState extends State<CartProductCard> {
             SizedBox(
               width: 20,
               child: Checkbox(
-                value: item.isChecked,
+                value: item.cart.isChecked,
                 onChanged: widget.onChanged,
                 fillColor: MaterialStateProperty.resolveWith<Color>(
                   (states) => states.contains(MaterialState.selected)
@@ -135,7 +103,7 @@ class _CartProductCardState extends State<CartProductCard> {
             // Image
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: item.imageUrl == '' ? 
+              child: item.product.imageUrl == '' ? 
               Image.asset(
                 "assets/default_images/default_image.png",
                 height: 120,
@@ -144,7 +112,7 @@ class _CartProductCardState extends State<CartProductCard> {
               )
               : 
               Image.asset(
-                item.imageUrl,
+                item.product.imageUrl,
                 height: 120,
                 width: 120,
                 fit: BoxFit.scaleDown,
@@ -157,7 +125,7 @@ class _CartProductCardState extends State<CartProductCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.productName,
+                    item.product.name,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -176,7 +144,7 @@ class _CartProductCardState extends State<CartProductCard> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    MyTextStyle.formatCurrency(item.oldPrice),
+                    MyTextStyle.formatCurrency(item.product.oldprice),
                     style: const TextStyle(
                       fontSize: MyTextStyle.size_13,
                       color: MyColors.darkGreyColor,
@@ -189,7 +157,7 @@ class _CartProductCardState extends State<CartProductCard> {
                       _buildQuantityControl(),
                       IconButton(
                         icon: const Icon(Icons.delete, color: MyColors.errorColor),
-                        onPressed: _removeItem,
+                        onPressed: (){},
                       ),
                     ],
                   ),
