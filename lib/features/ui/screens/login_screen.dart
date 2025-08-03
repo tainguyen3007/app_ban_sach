@@ -26,40 +26,54 @@ class _LoginState extends State<LoginScreen> {
   auth.User? user;
   
   void login() async {
-  final auth.User? currentUser = await AuthService().signInWithGoogle();
+    final auth.User? currentUser = await AuthService().signInWithGoogle();
 
-  if (currentUser != null) {
-    // ✅ Đăng nhập thành công
-    user = currentUser;
-    final prefs = await SharedPreferences.getInstance();
-    final isLoggedIn = await prefs.setBool('isLoggedIn', true);
+    if (currentUser != null) {
+      user = currentUser;
+      final prefs = await SharedPreferences.getInstance();
+      final isLoggedIn = await prefs.setBool('isLoggedIn', true);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Đăng nhập thành công")),
-    );
-    final authUser = user_fb.User(
-      email: user?.email ?? 'guest@gmail.com',
-      name: user?.displayName ?? "Guest",
-      password: '',
-      phoneNumber: user?.phoneNumber ?? "No phone number",
-      avatar: user?.photoURL??"assets/default_images/default_avatar.jpg");
-    await UserService.saveUser(authUser);
-    prefs.setString("userId", authUser.email);
-    prefs.setBool("isLogginIn", true);
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (_) => MainScreen(isLoggedIn: isLoggedIn, indexPage: 3,) 
-      ),
-      (route) => false,
-    );
-  } else {
-    // Đăng nhập thất bại
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Đăng nhập thất bại hoặc bị hủy")),
-    );
+      final authUser = user_fb.User(
+        email: user?.email ?? 'guest@gmail.com',
+        name: user?.displayName ?? "Guest",
+        password: '',
+        phoneNumber: user?.phoneNumber ?? "No phone number",
+        avatar: user?.photoURL ?? "assets/default_images/default_avatar.jpg",
+      );
+
+      await UserService.saveUser(authUser);
+      await prefs.setString("userId", authUser.email);
+      await prefs.setBool("isLogginIn", true);
+
+      // ✅ Gọi SnackBar trước
+      if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Đăng nhập thành công")),
+      );
+      
+      // Tuỳ chọn delay
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MainScreen(
+            isLoggedIn: isLoggedIn,
+            indexPage: 3,
+            user: authUser,
+          ),
+        ),
+        (route) => false,
+      );
+    } else {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Đăng nhập thất bại hoặc bị hủy")),
+      );
+    }
   }
-}
+
 
   void logout() async {
     await AuthService().signOut();
