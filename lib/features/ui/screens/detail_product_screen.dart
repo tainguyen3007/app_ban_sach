@@ -23,6 +23,13 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   bool isFavorite = false;
   int quantity = 1;
+  String userId = "";
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   // Danh sách sản phẩm gợi ý (static demo)
   @override
   Widget build(BuildContext context) {
@@ -110,7 +117,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             icon: const Icon(Icons.shopping_cart_outlined, color: MyColors.whiteColor, size: 26),
             onPressed: () {
               Navigator.push(context,
-               MaterialPageRoute(builder:(_) => const MainScreen(isLoggedIn: true, indexPage: 2),
+               MaterialPageRoute(builder:(_) => MainScreen(isLoggedIn: true, indexPage: 2),
               ));
             },
           ),
@@ -119,7 +126,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const UserScreen())        
+                MaterialPageRoute(builder: (_) => UserScreen())        
               );
             },
           ),
@@ -341,9 +348,9 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     quantity: quantity,
                     );
                     await CartService.insertCart(cartItem);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Đã thêm vào giỏ hàng!')),
-                  );
+                    if (mounted) {
+                      showSuccessfullyAddCartDialog(context, 'Đã thêm vào giỏ hàng!');
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -534,3 +541,39 @@ void showWarrantyPolicy(BuildContext context) {
     },
   );
 }
+//hiện popup nhỏ thông báo thêm giỏ hàng thành công
+void showSuccessfullyAddCartDialog(BuildContext context, String message) {
+  final overlay = Overlay.of(context);
+  if (overlay == null) return; // đảm bảo overlay tồn tại
+
+  final overlayEntry = OverlayEntry(
+    builder: (context) => Positioned(
+      top: MediaQuery.of(context).size.height / 2 - 30,
+      left: 40,
+      right: 40,
+      child: Material(
+        elevation: 6.0,
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.black.withOpacity(0.8),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  overlay.insert(overlayEntry);
+
+  // Tự động xóa sau 2 giây
+  Future.delayed(const Duration(seconds: 2), () {
+    if (overlayEntry.mounted) {
+      overlayEntry.remove();
+    }
+  });
+}
+
