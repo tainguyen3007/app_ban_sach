@@ -1,14 +1,15 @@
 
+import 'package:app_ban_sach/firebase_cloud/models/cart.dart';
 import 'package:app_ban_sach/firebase_cloud/models/product.dart';
+import 'package:app_ban_sach/firebase_cloud/service/cart_service.dart';
+import 'package:app_ban_sach/firebase_cloud/service/user_service.dart';
+import 'package:app_ban_sach/main.dart';
 import 'package:flutter/material.dart';
-import 'package:app_ban_sach/data/models/cart.dart';
 import 'package:app_ban_sach/features/ui/screens/home_screen.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/features/ui/screens/search_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/user_screen.dart';
-import 'package:app_ban_sach/features/ui/screens/cart_screen.dart';
-import 'package:app_ban_sach/data/datasources/cart_service.dart';
-import 'package:app_ban_sach/data/datasources/user_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Màn hình chi tiết sản phẩm
 class ProductDetailScreen extends StatefulWidget {
@@ -109,8 +110,8 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             icon: const Icon(Icons.shopping_cart_outlined, color: MyColors.whiteColor, size: 26),
             onPressed: () {
               Navigator.push(context,
-               MaterialPageRoute(builder:(_) => const CartScreen() ),
-              );
+               MaterialPageRoute(builder:(_) => const MainScreen(isLoggedIn: true, indexPage: 2),
+              ));
             },
           ),
           IconButton(
@@ -333,13 +334,13 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 ElevatedButton(
                   onPressed: () async {
                     // Lấy userId hiện tại từ UserService
-                    int userId = await UserService().getCurrentUserId();
+                    String userId = await UserService.getCurrentUserId();
                     final cartItem = Cart(
                     userId: userId,
-                    productId: int.parse(widget.product.id!), // Thêm dấu ! nếu chắc chắn id không null
+                    productId: widget.product.id!,
                     quantity: quantity,
                     );
-                    await CartService().insertCart(cartItem);
+                    await CartService.insertCart(cartItem);
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Đã thêm vào giỏ hàng!')),
                   );
