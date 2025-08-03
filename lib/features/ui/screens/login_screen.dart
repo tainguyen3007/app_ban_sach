@@ -1,6 +1,6 @@
 
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/firebase_cloud/models/user.dart' as userFB;
+import 'package:app_ban_sach/firebase_cloud/models/user.dart' as user_fb;
 import 'package:app_ban_sach/data/datasources/auth.service.dart';
 import 'package:app_ban_sach/firebase_cloud/service/user_service.dart';
 import 'package:app_ban_sach/features/ui/screens/register_screen.dart';
@@ -13,12 +13,11 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
-
   @override
   State<LoginScreen> createState() => _LoginState();
 }
-
 class _LoginState extends State<LoginScreen> {
+  final pref = SharedPreferences.getInstance();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
@@ -31,36 +30,31 @@ class _LoginState extends State<LoginScreen> {
 
   if (currentUser != null) {
     // ✅ Đăng nhập thành công
-      user = currentUser;
-      final prefs = await SharedPreferences.getInstance();
-      final isLoggedIn = await prefs.setBool('isLoggedIn', true);
+    user = currentUser;
+    final prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = await prefs.setBool('isLoggedIn', true);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Đăng nhập thành công")),
-      );
-
-      final authUser = userFB.User(
-        email: user?.email ?? 'guest@gmail.com', 
-        name: user?.displayName,
-        password: '', 
-        phoneNumber: user?.phoneNumber ?? "No phone number",
-        avatar: user?.photoURL??"assets/default_images/default_avatar.jpg");
-      await UserService.saveUser(authUser);
-      
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MainScreen(isLoggedIn: isLoggedIn, indexPage: 3,) 
-        ),
-        (route) => false,
-      );
-
-      
-    // Có thể hiện Snackbar, toast hoặc chuyển trang
-    
-
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Đăng nhập thành công")),
+    );
+    final authUser = user_fb.User(
+      email: user?.email ?? 'guest@gmail.com',
+      name: user?.displayName ?? "Guest",
+      password: '',
+      phoneNumber: user?.phoneNumber ?? "No phone number",
+      avatar: user?.photoURL??"assets/default_images/default_avatar.jpg");
+    await UserService.saveUser(authUser);
+    prefs.setString("userId", authUser.email);
+    prefs.setBool("isLogginIn", true);
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MainScreen(isLoggedIn: isLoggedIn, indexPage: 3,) 
+      ),
+      (route) => false,
+    );
   } else {
-    // ❌ Đăng nhập thất bại hoặc người dùng bấm Cancel
+    // Đăng nhập thất bại
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Đăng nhập thất bại hoặc bị hủy")),
     );
@@ -83,8 +77,6 @@ class _LoginState extends State<LoginScreen> {
       );
       return;
     }
-
-
   }
   @override
   Widget build(BuildContext context) {
