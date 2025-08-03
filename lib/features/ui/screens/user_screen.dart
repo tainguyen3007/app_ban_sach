@@ -54,22 +54,6 @@ class _UserScreenState extends State<UserScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // widget.user == null? 
-              // UserProfile(
-              //   name: widget.user?.name ?? "Khách" ,
-              //   username: widget.user?.email ?? "Đang là khách",
-              //   onPressed: () => {
-              //     Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()))
-              //   },
-              // ):
-              // UserProfile(
-              //   name: widget.user?.name?? "khahc1",
-              //   username: widget.user?.email ?? "Đang là khách",
-              //   onPressed: () => {
-              //     Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()))
-              //   },
-              // )
-              
               UserProfile(
                 avatar: info['photoURL'].toString(),
                 name: info['name'].toString(),
@@ -123,9 +107,6 @@ class _UserScreenState extends State<UserScreen> {
                 },
                 leadingIcon: Icons.person,
               ),
-              // Wrap(
-              //   children: products.map((product) => ProductCard(product: product)).toList(),
-              // ),
             ],
           ),
         ),
