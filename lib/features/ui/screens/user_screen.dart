@@ -1,9 +1,6 @@
-import 'dart:convert';
-import 'dart:developer';
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/data/datasources/auth.service.dart';
 import 'package:app_ban_sach/data/models/product_test.dart';
-import 'package:app_ban_sach/data/models/user.dart';
 import 'package:app_ban_sach/features/ui/screens/detail_user_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/login_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/order_screen.dart';
@@ -12,6 +9,7 @@ import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/list_tile.dart';
 import 'package:app_ban_sach/features/ui/widgets/order_status_tab.dart';
 import 'package:app_ban_sach/features/ui/widgets/user_profile.dart';
+import 'package:app_ban_sach/firebase_cloud/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ban_sach/features/ui/screens/settings_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/favorite_products_screen.dart';
