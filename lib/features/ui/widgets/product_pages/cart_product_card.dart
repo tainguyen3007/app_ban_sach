@@ -6,11 +6,13 @@ class CartProductCard extends StatefulWidget {
   final CartItemWithProduct item;
   final ValueChanged<bool?>? onChanged;
   final VoidCallback? onRemove;
+  final VoidCallback? onQuantityChanged;
 
   const CartProductCard({
     super.key,
     required this.item,
     required this.onChanged,
+    this.onQuantityChanged,
     this.onRemove,
   });
 
@@ -30,18 +32,31 @@ class _CartProductCardState extends State<CartProductCard> {
 
   Future<void> _updateQuantity(int change) async {
     final newQuantity = quantity + change;
-    if (newQuantity < 1) return;
+
+    if (newQuantity < 1) {
+      // Nếu muốn xóa khi về 0:
+      if (widget.onRemove != null) {
+        await CartService.deleteCart(widget.item.cart.id!);
+        widget.onRemove!();
+      }
+      return;
+    }
 
     setState(() {
       quantity = newQuantity;
       widget.item.cart.quantity = quantity;
     });
 
+    // Cập nhật trên Firebase
     if (widget.item.cart.id != null) {
-      await CartService.insertCart(widget.item.cart);
+      await CartService.updateCart(widget.item.cart);
+    }
+
+    // Báo về cha cập nhật tổng giá
+    if (widget.onQuantityChanged != null) {
+      widget.onQuantityChanged!();
     }
   }
-
 
   Widget _buildQuantityControl() {
     return Row(
@@ -103,20 +118,19 @@ class _CartProductCardState extends State<CartProductCard> {
             // Image
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: item.product.imageUrl == '' ? 
-              Image.asset(
-                "assets/default_images/default_image.png",
-                height: 120,
-                width: 120,
-                fit: BoxFit.scaleDown,
-              )
-              : 
-              Image.asset(
-                item.product.imageUrl,
-                height: 120,
-                width: 120,
-                fit: BoxFit.scaleDown,
-              )
+              child: item.product.imageUrl == ''
+                  ? Image.asset(
+                      "assets/default_images/default_image.png",
+                      height: 120,
+                      width: 120,
+                      fit: BoxFit.scaleDown,
+                    )
+                  : Image.asset(
+                      item.product.imageUrl,
+                      height: 120,
+                      width: 120,
+                      fit: BoxFit.scaleDown,
+                    ),
             ),
             const SizedBox(width: 10),
             // Product info
@@ -156,8 +170,9 @@ class _CartProductCardState extends State<CartProductCard> {
                     children: [
                       _buildQuantityControl(),
                       IconButton(
-                        icon: const Icon(Icons.delete, color: MyColors.errorColor),
-                        onPressed: (){},
+                        icon: const Icon(Icons.delete,
+                            color: MyColors.errorColor),
+                        onPressed: widget.onRemove,
                       ),
                     ],
                   ),

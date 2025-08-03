@@ -25,6 +25,7 @@ class _NewAddressScreenState extends State<NewAddressScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cities = DataCity.cities;
     return Scaffold(
       appBar: MyAppBar(
         title: "Thêm địa chỉ mới",

@@ -62,16 +62,16 @@ class _MyTextFieldState extends State<MyTextField> {
             hintStyle: const TextStyle(color: MyColors.greyColor),
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
             border: OutlineInputBorder(
-              borderRadius: MyRadius.defaultRadius,
+              borderRadius: MyRadius.mediumRadius,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: MyRadius.defaultRadius,
+              borderRadius: MyRadius.mediumRadius,
               borderSide: BorderSide(
                 color: MyColors.textColor,
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: MyRadius.defaultRadius,
+              borderRadius: MyRadius.mediumRadius,
               borderSide: BorderSide(
                 color: MyColors.textColor,
                 width: 2,
@@ -90,7 +90,7 @@ class _MyTextFieldState extends State<MyTextField> {
               ),
             ),
           ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 15),
       ],
     );
   }
