@@ -31,4 +31,8 @@ class UserService {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('userId') ?? "null";
   }
+  static Future<String> getGoogleUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userId') ?? "null";
+  }
 }
