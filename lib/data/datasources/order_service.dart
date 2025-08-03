@@ -7,7 +7,6 @@ class OrderService {
   static final OrderService _instance = OrderService._internal();
   factory OrderService() => _instance;
   OrderService._internal();
-
   final String ordersTable = 'ORDERS';
   final String detailsTable = 'ORDER_DETAIL';
 
