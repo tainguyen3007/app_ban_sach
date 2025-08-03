@@ -35,6 +35,15 @@ class CartService {
       await _cartRef.doc(cartId).set(cart.toMap());
     }
   }
+  static Future<void> updateCart(Cart cart) async {
+    final cartId = '${cart.userId}_${cart.productId}';
+    cart.id = cartId;
+
+    await _cartRef.doc(cartId).update({
+      'quantity': cart.quantity,
+      'isChecked': cart.isChecked,
+    });
+  }
 
   /// ✅ Xóa sản phẩm khỏi giỏ
   static Future<void> deleteCart(String cartId) async {
