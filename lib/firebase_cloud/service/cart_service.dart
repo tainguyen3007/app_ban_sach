@@ -18,7 +18,7 @@ class CartService {
       FirebaseFirestore.instance.collection('products');
 
   /// ✅ Thêm sản phẩm vào giỏ, cập nhật nếu sản phẩm đã thêm vào trước đó
-  static Future<void> insertCart(Cart cart) async {
+  static Future<void> saveCart(Cart cart) async {
     final cartId = '${cart.userId}_${cart.productId}';
     cart.id = cartId;
 
