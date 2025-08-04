@@ -1,5 +1,5 @@
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/data/datasources/auth.service.dart';
+import 'package:app_ban_sach/firebase_cloud/service/auth.service.dart';
 import 'package:app_ban_sach/data/models/product_test.dart';
 import 'package:app_ban_sach/features/ui/screens/detail_user_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/login_screen.dart';
@@ -23,7 +23,7 @@ class UserScreen extends StatefulWidget {
 }
 
 class _UserScreenState extends State<UserScreen> {
-  final List<ProductTest> products = [];
+  final List<Product> products = [];
   //Gọi thuộc tính của user google(name, email, hình ảnh)
   final info = AuthService().getCurrentUserInfo();
 
@@ -58,9 +58,7 @@ class _UserScreenState extends State<UserScreen> {
                 avatar: info['photoURL'].toString(),
                 name: info['name'].toString(),
                 username: info['email'].toString(),
-                onPressed: () => {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()))
-                },
+
               )
               ,
               const SizedBox(height: 10),
