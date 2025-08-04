@@ -6,6 +6,7 @@ import 'package:app_ban_sach/features/ui/screens/home_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/notification_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/user_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/nav_bottom.dart';
+import 'package:app_ban_sach/firebase_cloud/demo_data.dart';
 import 'package:app_ban_sach/firebase_cloud/models/user.dart';
 import 'package:app_ban_sach/firebase_cloud/service/user_service.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,6 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   final prefs = await SharedPreferences.getInstance(); 
   final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
   final userId = prefs.getString('userId') ?? 'null';
