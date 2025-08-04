@@ -1,9 +1,13 @@
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/features/ui/screens/new_address_screen.dart';
+import 'package:app_ban_sach/features/ui/screens/add_address_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/button.dart';
 import 'package:app_ban_sach/features/ui/widgets/text_field.dart';
+import 'package:app_ban_sach/firebase_cloud/models/address.dart';
+import 'package:app_ban_sach/firebase_cloud/service/address_service.dart';
+import 'package:app_ban_sach/firebase_cloud/service/user_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DetailUserScreen extends StatefulWidget {
   const DetailUserScreen({super.key});
@@ -19,23 +23,44 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
   final TextEditingController dobController = TextEditingController();
 
   String gender = "Nam";
+  Future<List<Address>>? _futureAddresses;
+
+  Future<List<Address>> fetchAddress() async {
+    try {
+      final userId = await UserService.getCurrentUserId();
+
+      final loadedAddresses = await AddressService.getAddressesByUser(userId);
+
+      return loadedAddresses;
+    } catch (e) {
+      return [];
+    }
+  }
 
   @override
+  void initState() {
+    _futureAddresses = fetchAddress();
+    super.initState();
+  }
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(
-        title: "Sửa Hồ Sơ",
-      ),
+      appBar: MyAppBar(title: "Sửa Hồ Sơ"),
       body: Stack(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 120), // Để tránh che nút
+              padding: const EdgeInsets.only(bottom: 120),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 10), // Thêm dòng này để cách xa AppBar
+                  const SizedBox(height: 10),
                   const Center(
                     child: Padding(
                       padding: EdgeInsets.only(bottom: MyTextStyle.size_16),
@@ -43,7 +68,7 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                         "Cập nhật thông tin tài khoản",
                         style: TextStyle(
                           fontWeight: MyTextStyle.bold,
-                          fontSize: MyTextStyle.size_16, // Tăng font size
+                          fontSize: MyTextStyle.size_16,
                           color: MyColors.textColor,
                         ),
                       ),
@@ -54,19 +79,16 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                     hintText: "Nhập họ và tên",
                     controller: nameController,
                   ),
-                  const SizedBox(height: 12),
                   MyTextField(
                     labelText: "Email",
                     hintText: "user@gmail.com",
                     controller: emailController,
                   ),
-                  const SizedBox(height: 12),
                   MyTextField(
                     labelText: "Số điện thoại",
                     hintText: "0312586999",
                     controller: phoneController,
                   ),
-                  const SizedBox(height: 12),
                   GestureDetector(
                     onTap: () async {
                       DateTime? picked = await showDatePicker(
@@ -87,7 +109,6 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
                   const Text(
                     "Giới tính",
                     style: TextStyle(
@@ -121,7 +142,6 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                       const Text("Nữ"),
                     ],
                   ),
-                  const SizedBox(height: 12),
                   const Text(
                     "Danh sách địa chỉ nhận hàng",
                     style: TextStyle(
@@ -131,43 +151,73 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: MyColors.greyColor),
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text("[Tên người nhận] | [SĐT]", style: TextStyle(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 2),
-                        const Text("[Số nhà]"),
-                        const Text("[Phường, quận, tp]"),
-                        const SizedBox(height: 2),
-                        const Text(
-                          "trạng thái mặc định",
-                          style: TextStyle(fontSize: 12, color: Colors.blue),
-                        ),
-                        const SizedBox(height: 8),
-                        SizedBox(
-                          width: double.infinity,
-                          child: MyButton(
-                            onPressed: () async {
-                              // Đảm bảo không bị double push
-                              FocusScope.of(context).unfocus();
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const NewAddressScreen(),
-                                ),
+                  FutureBuilder<List<Address>>(
+                    future: _futureAddresses,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        return Center(child: Text('Lỗi: ${snapshot.error}'));
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('Không có địa chỉ nào.'));
+                      }
+
+                      final addresses = snapshot.data!;
+                      return Column(
+                        children: [
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: addresses.length,
+                            itemBuilder: (context, index) {
+                              final address = addresses[index];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 4),
+                                child: _buildAddressCard(address, () async{
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddressScreen(),
+                                    ),
+                                  ).then((shouldRefresh) {
+                                    if (shouldRefresh == true) {
+                                      setState(() {
+                                        _futureAddresses = fetchAddress();
+                                      });
+                                    }
+                                  });
+                                }),
                               );
                             },
-                            text: "+ Thêm địa chỉ mới",
-                            isOutlined: true,
                           ),
-                        ),
-                      ],
+                        ],
+                      );
+                    },
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    child: SizedBox(
+                      width: 200,
+                      child: MyButton(
+                        color: Colors.blue,
+                        onPressed: () async {
+                          // Đảm bảo không bị double push
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddressScreen(),
+                            ),
+                          ).then((shouldRefresh) {
+                            if (shouldRefresh == true) {
+                              setState(() {
+                                _futureAddresses = fetchAddress();
+                              });
+                            }
+                          });
+                        },
+                        text: "+ Thêm địa chỉ mới",
+                        isOutlined: true,
+                      ),
                     ),
                   ),
                 ],
@@ -191,4 +241,35 @@ class _DetailUserScreenState extends State<DetailUserScreen> {
       ),
     );
   }
+  Widget _buildAddressCard(Address address, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: MyColors.whiteColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: MyColors.greyColor),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  address.receiverName,
+                  style: TextStyle(fontWeight: MyTextStyle.bold),
+                ),
+                Text(" | ${address.phoneNumber}"),
+              ],
+            ),
+            Text(address.streetAddress),
+            Text(address.city),
+          ],
+        ),
+      ),
+    );
+  }
+
 }
