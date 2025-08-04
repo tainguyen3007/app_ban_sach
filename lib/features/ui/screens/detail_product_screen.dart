@@ -109,7 +109,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => HomeScreen()),
+                MaterialPageRoute(builder: (_) => MainScreen(isLoggedIn: true, indexPage: 0),),
               );
             },
           ),
@@ -126,7 +126,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => UserScreen())        
+                MaterialPageRoute(builder: (_) => MainScreen(isLoggedIn: true, indexPage: 3),)        
               );
             },
           ),
@@ -347,7 +347,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     productId: widget.product.id!,
                     quantity: quantity,
                     );
-                    await CartService.insertCart(cartItem);
+                    await CartService.saveCart(cartItem);
                     if (mounted) {
                       showSuccessfullyAddCartDialog(context, 'Đã thêm vào giỏ hàng!');
                     }
