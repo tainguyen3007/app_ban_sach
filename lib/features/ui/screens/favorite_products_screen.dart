@@ -1,8 +1,6 @@
-import 'package:app_ban_sach/data/datasources/favorite_product_service.dart';
-import 'package:app_ban_sach/data/models/product.dart';
 import 'package:app_ban_sach/features/ui/widgets/favorite_card.dart';
+import 'package:app_ban_sach/firebase_cloud/models/product.dart';
 import 'package:flutter/material.dart';
-import 'package:app_ban_sach/data/models/product_test.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
 
 class FavoriteProductsScreen extends StatefulWidget {
@@ -14,7 +12,7 @@ class FavoriteProductsScreen extends StatefulWidget {
 
 class _FavoriteProductsScreenState extends State<FavoriteProductsScreen> {
   // Demo list, replace with your favorite products list from state/provider
-  List<ProductTest> favoriteProducts = [];
+  List<Product> favoriteProducts = [];
   void removeFromFavorite(int index) {
     setState(() {
       favoriteProducts.removeAt(index);
