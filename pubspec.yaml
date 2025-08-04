@@ -37,3 +37,4 @@ flutter:
   assets:
     - assets/
     - assets/default_images/
+    - assets/product_images/
