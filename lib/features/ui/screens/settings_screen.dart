@@ -1,4 +1,4 @@
-import 'package:app_ban_sach/data/datasources/auth.service.dart';
+import 'package:app_ban_sach/firebase_cloud/service/auth.service.dart';
 import 'package:app_ban_sach/main.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
@@ -6,7 +6,7 @@ import 'package:app_ban_sach/features/ui/screens/change_password_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/login_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:app_ban_sach/data/datasources/auth.service.dart';
+import 'package:app_ban_sach/firebase_cloud/service/auth.service.dart';
 
 
 class SettingsScreen extends StatefulWidget {
