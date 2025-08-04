@@ -1,10 +1,9 @@
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/data/models/favorite_product.dart';
-import 'package:app_ban_sach/data/models/product_test.dart';
+import 'package:app_ban_sach/firebase_cloud/models/product.dart';
 import 'package:flutter/material.dart';
 
 class FavoriteProductCard extends StatelessWidget {
-  ProductTest item;
+  Product item;
   VoidCallback onPressedDelete;
   FavoriteProductCard({
     required this.onPressedDelete,
