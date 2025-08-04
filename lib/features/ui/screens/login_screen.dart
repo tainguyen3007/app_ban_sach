@@ -1,7 +1,7 @@
 
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/firebase_cloud/models/user.dart' as user_fb;
-import 'package:app_ban_sach/data/datasources/auth.service.dart';
+import 'package:app_ban_sach/firebase_cloud/service/auth.service.dart';
 import 'package:app_ban_sach/firebase_cloud/service/user_service.dart';
 import 'package:app_ban_sach/features/ui/screens/register_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
@@ -25,7 +25,13 @@ class _LoginState extends State<LoginScreen> {
 
   auth.User? user;
   
+  bool _isLoading = false;
+
   void login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     final auth.User? currentUser = await AuthService().signInWithGoogle();
 
     if (currentUser != null) {
@@ -45,14 +51,10 @@ class _LoginState extends State<LoginScreen> {
       await prefs.setString("userId", authUser.email);
       await prefs.setBool("isLogginIn", true);
 
-      // ✅ Gọi SnackBar trước
       if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Đăng nhập thành công")),
       );
-      
-      // Tuỳ chọn delay
-      await Future.delayed(const Duration(milliseconds: 500));
 
       if (!mounted) return;
       Navigator.pushAndRemoveUntil(
@@ -67,12 +69,20 @@ class _LoginState extends State<LoginScreen> {
         (route) => false,
       );
     } else {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Đăng nhập thất bại hoặc bị hủy")),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Đăng nhập thất bại hoặc bị hủy")),
+        );
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
+
 
 
   void logout() async {
@@ -96,110 +106,121 @@ class _LoginState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(title: 'Đăng nhập',showBackButton: false,),
-      body: SingleChildScrollView(
-        child: Container(  
-          color: MyColors.whiteColor,
-          padding: EdgeInsets.symmetric(horizontal: 10.0), // Thay đổi padding ngang
-          child: Container(
-            padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0), // Thêm padding trên và hai bên
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(height: paddingHorizontal), 
-                // Logo
-                Image.asset(
-                    'assets/logo_offical.png', 
-                    height: 150,
-                    width: 150,
-                  ),
-                SizedBox(height: paddingHorizontal),
-                // Nhập sdt
-                MyTextField(
-                  labelText: 'Username',
-                  hintText: 'Nhập username',
-                  controller: phoneController,
-                  isPassword: false,
-                ),
-                // Nhập password
-                MyTextField(
-                  labelText: 'Mật khẩu',
-                  hintText: 'Nhập mật khẩu',
-                  controller: passwordController,
-                  isPassword: true,
-                ),
-                // Đăng nhập button
-                MyButton(
-                  text: 'Đăng nhập', 
-                  isOutlined: false, //nút outline
-                  isDisabled: false, // nút bị vô hiêu hóa
-                  onPressed: _onClickLogin,
-                ),
-                // Quên mật khẩu
-                SizedBox(
-                  height: 33,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          // Xử lý quên mật khẩu ở đây
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Chức năng quên mật khẩu chưa được triển khai!')),
-                          );
-                        },
-                        child: const Text(
-                          'Quên mật khẩu?',
-                          style: TextStyle(
-                            color: MyColors.warningColor,
-                            fontSize: MyTextStyle.size_13,),
-                        ),
+      body: Stack(
+        children:[
+          SingleChildScrollView(
+            child: Container(  
+              color: MyColors.whiteColor,
+              padding: EdgeInsets.symmetric(horizontal: 10.0), // Thay đổi padding ngang
+              child: Container(
+                padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0), // Thêm padding trên và hai bên
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(height: paddingHorizontal), 
+                    // Logo
+                    Image.asset(
+                        'assets/logo_offical.png', 
+                        height: 150,
+                        width: 150,
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 37,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Bạn đã có tài khoản chưa? ",
-                        style: TextStyle(
-                          color: MyColors.textColor,
-                          fontSize: MyTextStyle.size_16,
-                          fontWeight: MyTextStyle.semibold
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: (){
-                          Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => RegisterScreen(),
+                    SizedBox(height: paddingHorizontal),
+                    // Nhập sdt
+                    MyTextField(
+                      labelText: 'Username',
+                      hintText: 'Nhập username',
+                      controller: phoneController,
+                      isPassword: false,
+                    ),
+                    // Nhập password
+                    MyTextField(
+                      labelText: 'Mật khẩu',
+                      hintText: 'Nhập mật khẩu',
+                      controller: passwordController,
+                      isPassword: true,
+                    ),
+                    // Đăng nhập button
+                    MyButton(
+                      text: 'Đăng nhập', 
+                      isOutlined: false, //nút outline
+                      isDisabled: false, // nút bị vô hiêu hóa
+                      onPressed: _onClickLogin,
+                    ),
+                    // Quên mật khẩu
+                    SizedBox(
+                      height: 33,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              // Xử lý quên mật khẩu ở đây
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Chức năng quên mật khẩu chưa được triển khai!')),
+                              );
+                            },
+                            child: const Text(
+                              'Quên mật khẩu?',
+                              style: TextStyle(
+                                color: MyColors.warningColor,
+                                fontSize: MyTextStyle.size_13,),
+                            ),
                           ),
-                    );
-                        },
-                        child: const Text(
-                          'Đăng ký',
-                          style: TextStyle(
-                            color: MyColors.primaryColor,
-                            fontSize: MyTextStyle.size_16,
-                            fontWeight: MyTextStyle.semibold
-                          ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      height: 37,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Bạn đã có tài khoản chưa? ",
+                            style: TextStyle(
+                              color: MyColors.textColor,
+                              fontSize: MyTextStyle.size_16,
+                              fontWeight: MyTextStyle.semibold
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: (){
+                              Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => RegisterScreen(),
+                              ),
+                        );
+                            },
+                            child: const Text(
+                              'Đăng ký',
+                              style: TextStyle(
+                                color: MyColors.primaryColor,
+                                fontSize: MyTextStyle.size_16,
+                                fontWeight: MyTextStyle.semibold
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    MyButton(text: 'Đăng nhập bằng Google', 
+                      imagePath: 'assets/google_logo.jpg', // Đường dẫn hình ảnh
+                      isOutlined: true, //nút outline
+                      isDisabled: false, // nút bị vô hiêu hóa
+                      onPressed: login,
+                    ),
+                  ],
                 ),
-                MyButton(text: 'Đăng nhập bằng Google', 
-                  imagePath: 'assets/google_logo.jpg', // Đường dẫn hình ảnh
-                  isOutlined: true, //nút outline
-                  isDisabled: false, // nút bị vô hiêu hóa
-                  onPressed: login,
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.3),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ]
       ),
     );
   }
