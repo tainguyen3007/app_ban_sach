@@ -1,9 +1,9 @@
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/data/datasources/catetgory_service.dart';
 import 'package:app_ban_sach/features/ui/widgets/button.dart';
+import 'package:app_ban_sach/firebase_cloud/models/category.dart';
 import 'package:app_ban_sach/firebase_cloud/models/product.dart';
+import 'package:app_ban_sach/firebase_cloud/service/category_service.dart';
 import 'package:app_ban_sach/firebase_cloud/service/product_service.dart';
-import 'package:app_ban_sach/data/models/category.dart';
 import 'package:app_ban_sach/features/ui/screens/detail_product_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart';
 import 'package:flutter/material.dart';
@@ -16,11 +16,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   Future<List<Product>> fetchProducts() {
     return ProductService.getAllProducts();
   }
   Future<List<Category>> fetchCategories() {
-    return CategoryService().getAllCategories();
+    return CategoryService.getAllCategories();
   }
   Widget customListTile({
     required String title,
@@ -113,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Lỗi: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('Không có danh mục.'));
+                    return const Center(child: Text('Không có sản phẩm nào.'));
                   }
 
                   final categories = snapshot.data!;
@@ -144,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Lỗi: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Không có sản phẩm nào.'));
+            return const Center(child: Text('Không có danh mục nào.'));
           }
 
           final products = snapshot.data!;
