@@ -1,6 +1,7 @@
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/firebase_cloud/models/product.dart';
 import 'package:flutter/material.dart';
+
 class ProductCard extends StatelessWidget {
   final Product product;
 
@@ -30,16 +31,16 @@ class ProductCard extends StatelessWidget {
                 topRight: Radius.circular(12),
               ),
               child: AspectRatio(
-                aspectRatio: 1, // Tỉ lệ vuông cho hình
+                aspectRatio: 1, // Tỉ lệ vuông
                 child: Image.asset(
                   product.imageUrl.isNotEmpty
                       ? product.imageUrl
                       : 'assets/default_images/default_image.png',
-                  fit: BoxFit.scaleDown,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
-      
+
             // Nội dung
             Padding(
               padding: const EdgeInsets.all(10),
@@ -48,7 +49,7 @@ class ProductCard extends StatelessWidget {
                 children: [
                   // Tên sản phẩm
                   SizedBox(
-                    height: 34,
+                    height: 36,
                     child: Text(
                       product.name,
                       style: const TextStyle(
@@ -57,21 +58,23 @@ class ProductCard extends StatelessWidget {
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      
                     ),
                   ),
-      
+
                   const SizedBox(height: 6),
-      
+
                   // Giá và giảm giá
                   Row(
                     children: [
-                      Text(
-                        MyTextStyle.formatCurrency(product.price),
-                        style: const TextStyle(
-                          fontSize: MyTextStyle.size_16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
+                      Flexible(
+                        child: Text(
+                          MyTextStyle.formatCurrency(product.price),
+                          style: const TextStyle(
+                            fontSize: MyTextStyle.size_16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(width: 6),
@@ -93,11 +96,11 @@ class ProductCard extends StatelessWidget {
                         ),
                     ],
                   ),
-      
+
                   const SizedBox(height: 4),
-      
+
                   // Giá gốc
-                  product.oldprice > 0 ?
+                  if (product.oldprice > 0)
                     Text(
                       MyTextStyle.formatCurrency(product.oldprice),
                       style: const TextStyle(
@@ -105,10 +108,11 @@ class ProductCard extends StatelessWidget {
                         color: Colors.grey,
                         decoration: TextDecoration.lineThrough,
                       ),
-                    )
-                    : Text(" "),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
                   const SizedBox(height: 6),
-      
+
                   // Số lượng đã bán
                   Align(
                     alignment: Alignment.centerRight,
@@ -118,6 +122,7 @@ class ProductCard extends StatelessWidget {
                         fontSize: MyTextStyle.size_11,
                         color: MyColors.darkGreyColor,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
