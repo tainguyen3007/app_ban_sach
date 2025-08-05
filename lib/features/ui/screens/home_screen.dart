@@ -29,12 +29,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Timer? _trendingScrollTimer;
   Timer? _discountScrollTimer;
 
-  static const double _autoScrollStep = 200;
-  static const Duration _trendingInterval = Duration(seconds: 3);
-  static const Duration _discountInterval = Duration(seconds: 4);
-  static const double _searchBarHeight = 44;
-  static const double _searchBarWidth = 308;
-  static const double _cardWidth = 200;
+  final double _autoScrollStep = 200;
+  final Duration _trendingInterval = Duration(seconds: 3);
+  final Duration _discountInterval = Duration(seconds: 4);
+  final double _searchBarHeight = 50;
+  final double _searchBarWidth = 500;
+  final double _cardWidth = 200;
 
   final List<CategoryGridItem> categoriesGrid = [
   CategoryGridItem(imagePath: 'assets/sn.jpg', label: 'Sinh Nhật\n49 Năm'),
