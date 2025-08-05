@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Lỗi: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text('Không có danh mục nào.'));
+            return const Center(child: Text('Không có sản phẩm nào.'));
           }
 
           final products = snapshot.data!;
@@ -176,20 +176,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-                SizedBox(
-                  height: 300,
-                  child: _buildListViewProductsByCategory(products, 6),
-                ),
-                SizedBox(
-                  width: 200,
-                  child: MyButton(
-                    text: "Xem thêm",
-                    isOutlined: true,
-                    onPressed: (){
-                      
-                    },
-                  ),
-                ),
+                _buildListViewProductsByCategory(products, 6),
+                
+                
                 GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -218,33 +207,44 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
-Widget _buildListViewProductsByCategory(List<Product> products, int maxCount){
-  return ListView.builder(
-    shrinkWrap: true,
-    scrollDirection: Axis.horizontal,
-    padding: const EdgeInsets.symmetric(horizontal: 10),
-    itemCount: products.length >= maxCount ? maxCount : products.length,
-    itemBuilder: (context, index) {
-      final product = products[index];
-      return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ProductDetailScreen(product: product),
-            ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(right: 10),
-          child: Column(
-            children: [
-              ProductCard(product: product),
-            ],
+  Widget _buildListViewProductsByCategory(List<Product> products, int maxCount) {
+    return Column(
+      spacing: 10,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: products.take(maxCount).map((product) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ProductDetailScreen(product: product),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: ProductCard(product: product),
+                ),
+              );
+            }).toList(),
           ),
         ),
-      );
-    },
-  );
+        SizedBox(
+          width: 200,
+          child: MyButton(
+            text: "Xem thêm",
+            isOutlined: true,
+            onPressed: (){
+                          
+            },
+          ),
+        ),
+      ],
+    );
+  }
 }
+
