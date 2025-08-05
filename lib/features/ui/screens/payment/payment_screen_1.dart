@@ -1,6 +1,7 @@
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/data/models/address_data.dart';
 import 'package:app_ban_sach/features/ui/screens/add_address_screen.dart';
+import 'package:app_ban_sach/features/ui/screens/payment/payment_screen_2.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/button.dart';
 import 'package:app_ban_sach/firebase_cloud/models/address.dart';
@@ -24,6 +25,7 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
 
   final List<String> _cities = DataCity.cities;
   String? _selectedCity;
+  String selectedAddressId = '';
   Future<List<Address>>? _futureAddresses;
     Future<List<Address>> fetchAddress() async {
     try {
@@ -36,6 +38,12 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
       return [];
     }
   }
+  @override
+  void initState() {
+    _futureAddresses = fetchAddress();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,20 +106,16 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
                               final address = addresses[index];
                               return Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 4),
-                                child: _buildAddressCard(address, () async{
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => AddressScreen(),
-                                    ),
-                                  ).then((shouldRefresh) {
-                                    if (shouldRefresh == true) {
-                                      setState(() {
-                                        _futureAddresses = fetchAddress();
-                                      });
-                                    }
-                                  });
-                                }),
+                                child: _buildAddressCard(
+                                  address:  address,
+                                  onTap: onTapItemAddress,
+                                  groupValue: selectedAddressId,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedAddressId = value!;
+                                    });
+                                  },
+                                ),
                               );
                             },
                           ),
@@ -131,8 +135,27 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
             right: 16,
             child: MyButton(
               text: "Giao đến địa chỉ này",
-              onPressed: () {
-                // TODO: xử lý tiếp theo
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => PaymentScreen2(currentStep: 2),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      const begin = Offset(1.0, 0.0); // bắt đầu từ bên phải
+                      const end = Offset.zero;       // kết thúc tại vị trí hiện tại
+                      const curve = Curves.ease;
+
+                      final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                      final offsetAnimation = animation.drive(tween);
+
+                      return SlideTransition(
+                        position: offsetAnimation,
+                        child: child,
+                      );
+                    },
+                    transitionDuration: Duration(milliseconds: 300), // Tùy chỉnh tốc độ
+                  ),
+                );
               },
             ),
           ),
@@ -186,7 +209,12 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
       color: Colors.grey,
     );
   }
-  Widget _buildAddressCard(Address address, VoidCallback onTap) {
+  Widget _buildAddressCard({
+    required Address address,
+    required String groupValue, // địa chỉ ID được chọn
+    required Function(String?) onChanged, // callback khi chọn
+    required VoidCallback onTap, // nhấn vào để sửa
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -197,23 +225,48 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: MyColors.greyColor),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Row(
+            Radio<String>(
+              fillColor: MaterialStateProperty.all(MyColors.primaryColor),
+              value: address.id,
+              groupValue: groupValue,
+              onChanged: onChanged,
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  address.receiverName,
-                  style: TextStyle(fontWeight: MyTextStyle.bold),
+                Row(
+                  children: [
+                    Text(
+                      address.receiverName,
+                      style: TextStyle(fontWeight: MyTextStyle.bold),
+                    ),
+                    Text(" | ${address.phoneNumber}"),
+                  ],
                 ),
-                Text(" | ${address.phoneNumber}"),
+                Text(address.streetAddress),
+                Text(address.city),
               ],
             ),
-            Text(address.streetAddress),
-            Text(address.city),
           ],
         ),
       ),
     );
+  }
+  void onTapItemAddress() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddressScreen(),
+      ),
+    ).then((shouldRefresh) {
+      if (shouldRefresh == true) {
+        setState(() {
+          _futureAddresses = fetchAddress();
+        });
+      }
+    });
   }
 }
