@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app_ban_sach/firebase_cloud/models/address.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddressService {
   static final _addressCollection =
@@ -40,5 +43,9 @@ class AddressService {
       return Address.fromMap(doc.data()!, doc.id);
     }
     return null;
+  }
+  static Future<String> getSelectedAddressId() async{
+    final pref = await SharedPreferences.getInstance();
+    return pref.getString("addressId") ?? "";
   }
 }

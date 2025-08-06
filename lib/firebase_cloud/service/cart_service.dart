@@ -86,4 +86,26 @@ class CartService {
 
     return result;
   }
+    /// ✅ Lấy giỏ hàng đã được chọn (isChecked = true) của user kèm thông tin sản phẩm
+  static Future<List<CartItemWithProduct>> getCheckedCartWithProductByUser(String userId) async {
+    final cartQuery = await _cartRef
+        .where('userId', isEqualTo: userId)
+        .where('isChecked', isEqualTo: true)
+        .get();
+
+    List<CartItemWithProduct> result = [];
+
+    for (var doc in cartQuery.docs) {
+      final cart = Cart.fromMap(doc.data() as Map<String, dynamic>, docId: doc.id);
+      final productDoc = await _productRef.doc(cart.productId).get();
+
+      if (productDoc.exists) {
+        final product = Product.fromMap(productDoc.data() as Map<String, dynamic>, productDoc.id);
+        result.add(CartItemWithProduct(cart: cart, product: product));
+      }
+    }
+
+    return result;
+  }
+
 }
