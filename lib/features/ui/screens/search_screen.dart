@@ -1,3 +1,4 @@
+import 'package:app_ban_sach/features/ui/screens/result_product_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
@@ -135,7 +136,18 @@ class _SearchScreenState extends State<SearchScreen> {
                             isDense: true,
                           ),
                           style: const TextStyle(fontSize: 16),
-                          onSubmitted: (value) {},
+                          textInputAction: TextInputAction.search, // 👉 để bàn phím hiển thị nút search
+                          onSubmitted: (value) {
+                            final keyword = value.trim();
+                            if (keyword.isNotEmpty) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => ResultProductScreen(keyword: keyword),
+                                ),
+                              );
+                            }
+                          },
                         ),
                       ),
                       IconButton(

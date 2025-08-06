@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/features/ui/widgets/banner_slider.dart';
 import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart';
-import 'package:app_ban_sach/features/ui/widgets/product_pages/small_product_card.dart';
 import 'package:app_ban_sach/features/ui/screens/detail_product_screen.dart';
 import 'package:app_ban_sach/firebase_cloud/models/category.dart';
 import 'package:app_ban_sach/firebase_cloud/models/product.dart';
@@ -111,60 +110,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildHorizontalSection({
-    required String title,
-    required IconData icon,
-    required Color color,
-    required List<Product> products,
-    required ScrollController controller,
-    bool isSmallCard = false,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Row(
-            children: [
-              Icon(icon, color: color),
-              const SizedBox(width: 10),
-              Text(
-                title,
-                style: TextStyle(
-                  color: color,
-                  fontSize: MyTextStyle.size_20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(
-          height: 250,
-          child: ListView.builder(
-            shrinkWrap: true,
-            controller: controller,
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            itemCount: products.length,
-            itemBuilder: (context, index) {
-              final product = products[index];
-              return Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: GestureDetector(
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailScreen(product: product))),
-                  child: isSmallCard
-                      ? SmallProductCard(product: product)
-                      : SizedBox(width: _cardWidth, child: ProductCard(product: product)),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
     );
   }
 
