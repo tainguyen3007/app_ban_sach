@@ -14,11 +14,12 @@ class MyNavBottom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(bottom: 15),
       decoration: BoxDecoration(
+        color: MyColors.whiteColor,
         boxShadow: [
           BoxShadow(
             color: Colors.black12, // Màu bóng mờ
+            
             blurRadius: 3, // Độ mờ của bóng
             offset: Offset(0, -2), // Vị trí bóng (hướng lên trên)
           ),

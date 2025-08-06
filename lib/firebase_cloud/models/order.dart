@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'order_item.dart';
 
 class Order {
@@ -34,7 +36,7 @@ class Order {
       totalAmount: (map['totalAmount'] ?? 0).toDouble(),
       discount: (map['discount'] ?? 0).toDouble(),
       shippingFee: (map['shippingFee'] ?? 0).toDouble(),
-      createdAt: map['createdAt'] ?? '',
+      createdAt: (map['createdAt'] ?? ''),
       shippingAddressId: map['shippingAddressId'] ?? '',
       paymentMethod: map['paymentMethod'] ?? '',
       status: map['status'] ?? '',
