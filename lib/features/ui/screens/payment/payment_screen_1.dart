@@ -130,6 +130,28 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
                       );
                     },
                   ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: MyButton(
+                      isOutlined: true,
+                      color: Colors.blue,
+                      text: "+ Thêm địa chỉ mới",
+                      onPressed: ()async{
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddressScreen(),
+                          ),
+                        ).then((shouldRefresh) {
+                          if (shouldRefresh == true) {
+                            setState(() {
+                              _futureAddresses = fetchAddress();
+                            });
+                          }
+                        });
+                      },
+                    ),
+                  )
                 ],
               ),
             ),
