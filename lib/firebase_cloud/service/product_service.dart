@@ -76,6 +76,30 @@ class ProductService {
         .map((doc) => Product.fromMap(doc.data() as Map<String, dynamic>, doc.id))
         .toList();
   }
+  List<Product> sortProducts(List<Product> products, String sortOption) {
+    final sortedList = List<Product>.from(products); // tạo bản sao để không thay đổi gốc
+
+    switch (sortOption) {
+      case 'Giá thấp → cao':
+        sortedList.sort((a, b) => a.price.compareTo(b.price));
+        break;
+      case 'Giá cao → thấp':
+        sortedList.sort((a, b) => b.price.compareTo(a.price));
+        break;
+      case 'Bán chạy':
+        sortedList.sort((a, b) => b.soldCount.compareTo(a.soldCount));
+        break;
+      case 'Giảm giá nhiều':
+        sortedList.sort((a, b) => b.discount.compareTo(a.discount));
+        break;
+      case 'Mặc định':
+      default:
+        // Không sắp xếp lại
+        break;
+    }
+
+    return sortedList;
+  }
 
 
 }

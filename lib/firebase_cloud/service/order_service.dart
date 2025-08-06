@@ -52,4 +52,6 @@ class OrderService {
     final pref = await SharedPreferences.getInstance();
     return pref.getDouble("shippingFee")?? 0;
   }
+
+  
 }
