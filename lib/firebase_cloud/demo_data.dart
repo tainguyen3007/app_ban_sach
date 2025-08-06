@@ -1,7 +1,10 @@
 import 'package:app_ban_sach/firebase_cloud/models/category.dart';
+import 'package:app_ban_sach/firebase_cloud/models/order_item.dart';
 import 'package:app_ban_sach/firebase_cloud/models/product.dart';
 import 'package:app_ban_sach/firebase_cloud/service/category_service.dart';
+import 'package:app_ban_sach/firebase_cloud/service/order_service.dart';
 import 'package:app_ban_sach/firebase_cloud/service/product_service.dart';
+import 'package:app_ban_sach/firebase_cloud/models/order.dart' as MyOrder;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 
@@ -207,6 +210,40 @@ class DemoDataSeeder {
       await ProductService.saveProduct(product);
     }
   }
+static void seedOrders() async {
+  final orderItems = [
+    OrderItem(
+      productId: 'p001',
+      productName: "book1",
+      price: 120.0,
+      imageUrl: 'https://example.com/book1.jpg',
+      quantity: 2,
+    ),
+    OrderItem(
+      productId: 'p002',
+      productName: 'book2',
+      price: 90.0,
+      imageUrl: 'https://example.com/book2.jpg',
+      quantity: 1,
+    ),
+  ];
+
+  final newOrder = MyOrder.Order(
+    id: '', // sẽ được gán trong service
+    userId: 'u001',
+    totalAmount: 330.0,
+    discount: 30.0,
+    shippingFee: 20.0,
+    createdAt: DateTime.now().toIso8601String(),
+    shippingAddressId: 'a001',
+    paymentMethod: 'Tiền mặt',
+    status: 'Chờ xác nhận',
+    note: 'Giao buổi sáng',
+    orderItems: orderItems,
+  );
+
+  await OrderService.addOrder(newOrder);
+}
 
   static Future<void> seedAll() async {
     await seedCategories();
