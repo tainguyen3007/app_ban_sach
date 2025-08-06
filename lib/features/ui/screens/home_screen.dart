@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'package:app_ban_sach/features/ui/screens/result_product_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
@@ -128,7 +129,9 @@ class _HomeScreenState extends State<HomeScreen> {
           child: ListTile(
             title: Text(category.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () => Navigator.pop(context),
+            onTap: () => {
+              Navigator.push(context, MaterialPageRoute(builder: (_) => ResultProductScreen(keyword: category.name,)))
+            },
           ),
         );
       },

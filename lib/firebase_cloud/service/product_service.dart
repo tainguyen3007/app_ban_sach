@@ -67,5 +67,15 @@ class ProductService {
     return results;
   }
 
+  static Future<List<Product>> getProductsByCategory(String categoryId) async {
+    final snapshot = await _productRef
+        .where('categoryId', isEqualTo: categoryId)
+        .get();
+
+    return snapshot.docs
+        .map((doc) => Product.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+        .toList();
+  }
+
 
 }
