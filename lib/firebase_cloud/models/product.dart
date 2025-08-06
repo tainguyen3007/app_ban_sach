@@ -40,6 +40,7 @@ class Product {
   Map<String, dynamic> toMap() {
     return {
       'name': name,
+      'name_lowercase': name.toLowerCase(), // thêm để hỗ trợ tìm kiếm
       'des': des,
       'price': price,
       'oldprice': oldprice,
@@ -49,4 +50,5 @@ class Product {
       'categoryId': categoryId,
     };
   }
+
 }

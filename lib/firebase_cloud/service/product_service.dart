@@ -33,4 +33,39 @@ class ProductService {
   static Future<void> deleteProduct(String id) async {
     await _productRef.doc(id).delete();
   }
+
+  // 🔹 Tìm kiếm sản phẩm theo tên (bắt đầu bằng query)
+  static Future<List<Product>> searchProductsByName(String query) async {
+    if (query.isEmpty) return [];
+
+    final upperQuery = query.trim().toLowerCase();
+    final endQuery = upperQuery.substring(0, upperQuery.length - 1) +
+        String.fromCharCode(upperQuery.codeUnitAt(upperQuery.length - 1) + 1);
+
+    final snapshot = await _productRef
+        .where('name_lowercase', isGreaterThanOrEqualTo: upperQuery)
+        .where('name_lowercase', isLessThan: endQuery)
+        .get();
+
+    return snapshot.docs
+        .map((doc) => Product.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+        .toList();
+  }
+
+  static Future<List<Product>> searchProductsByName1(String query) async {
+    final keyword = query.toLowerCase().trim();
+
+    final snapshot = await _productRef.get(); // 🔹 Lấy toàn bộ sản phẩm
+
+    final results = snapshot.docs
+        .map((doc) => Product.fromMap(doc.data() as Map<String, dynamic>, doc.id))
+        .where((product) =>
+            product.name.toLowerCase().contains(keyword) ||
+            product.des.toLowerCase().contains(keyword)) // 🔹 Tìm cả trong name và des
+        .toList();
+
+    return results;
+  }
+
+
 }
