@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
 
 class HomeBannerSlider extends StatefulWidget {
-  const HomeBannerSlider({Key? key}) : super(key: key);
+  const HomeBannerSlider({super.key});
 
   @override
   State<HomeBannerSlider> createState() => _HomeBannerSliderState();

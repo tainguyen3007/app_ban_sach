@@ -38,7 +38,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Navigator.pop(context); // Quay lại màn hình trước
               },
             )
-          : null,
+          : SizedBox.shrink(),
       actions:[
         Row(
           children: [

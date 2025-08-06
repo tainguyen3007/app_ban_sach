@@ -19,7 +19,7 @@ class MyRadius {
 }
 
 class MyTextStyle {
-  static const double size_30 = 30.0; //size tiêu đề
+  static const double size_30 = 30; //size tiêu đề
   static const double size_24 = 24; //size tiêu đề
   static const double size_20 = 20; //size tiêu đề
 

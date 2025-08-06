@@ -27,7 +27,7 @@ class _LoginState extends State<LoginScreen> {
   
   bool _isLoading = false;
 
-  void login() async {
+  void onClickLoginWithGoogle() async {
     setState(() {
       _isLoading = true;
     });
@@ -206,7 +206,7 @@ class _LoginState extends State<LoginScreen> {
                       imagePath: 'assets/google_logo.jpg', // Đường dẫn hình ảnh
                       isOutlined: true, //nút outline
                       isDisabled: false, // nút bị vô hiêu hóa
-                      onPressed: login,
+                      onPressed: onClickLoginWithGoogle,
                     ),
                   ],
                 ),
