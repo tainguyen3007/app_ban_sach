@@ -7,6 +7,7 @@ import 'package:app_ban_sach/features/ui/widgets/product_pages/order_product_car
 import 'package:app_ban_sach/firebase_cloud/service/cart_service.dart';
 import 'package:app_ban_sach/firebase_cloud/service/user_service.dart';
 import 'package:app_ban_sach/firebase_cloud/models/order_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentScreen2 extends StatefulWidget {
   final int currentStep;
@@ -60,86 +61,93 @@ class _PaymentScreen2State extends State<PaymentScreen2> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(title: "Thanh toán"),
-      body: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                SingleChildScrollView(
-                  padding: const EdgeInsets.only(bottom: 100),
-                  child: Container(
-                    color: MyColors.lightGreyColor,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildStepProgress(),
-                        _buildSectionTitle("SẢN PHẨM"),
-                        _isLoading
-                            ? const Center(child: CircularProgressIndicator())
-                            : ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: displayItems.length,
-                                itemBuilder: (context, index) =>
-                                    OrderProductCard(item: displayItems[index]),
-                              ),
-                        _buildSectionTitle("PHƯƠNG THỨC VẬN CHUYỂN"),
-                        _buildCardSection(child: _buildDeliveryCard("Giao hàng tiêu chuẩn", "25/8/2025")),
-                        _buildSectionTitle("PHƯƠNG THỨC THANH TOÁN"),
-                        _buildCardSection(
-                          child: Column(
-                            children: [
-                              _buildPaymentMethodCard("Thanh toán khi nhận hàng", "assets/money.png"),
-                              _buildPaymentMethodCard("Ví Momo", "assets/momo.png"),
-                              _buildPaymentMethodCard("VNPAY", "assets/vnpay.png"),
-                            ],
+      body: Container(
+        color: MyColors.lightGreyColor,
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    padding: const EdgeInsets.only(bottom: 100),
+                    child: Container(
+                      color: MyColors.lightGreyColor,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildStepProgress(),
+                          _buildSectionTitle("SẢN PHẨM"),
+                          _isLoading
+                              ? const Center(child: CircularProgressIndicator())
+                              : ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: displayItems.length,
+                                  itemBuilder: (context, index) =>
+                                      OrderProductCard(item: displayItems[index]),
+                                ),
+                          _buildSectionTitle("PHƯƠNG THỨC VẬN CHUYỂN"),
+                          _buildCardSection(child: _buildDeliveryCard("Giao hàng tiêu chuẩn", "25/8/2025")),
+                          _buildSectionTitle("PHƯƠNG THỨC THANH TOÁN"),
+                          _buildCardSection(
+                            child: Column(
+                              children: [
+                                _buildPaymentMethodCard("Thanh toán khi nhận hàng", "assets/money.png"),
+                                _buildPaymentMethodCard("Ví Momo", "assets/momo.png"),
+                                _buildPaymentMethodCard("VNPAY", "assets/vnpay.png"),
+                              ],
+                            ),
                           ),
-                        ),
-                        _buildSectionTitle("GIÁ TRỊ ĐƠN HÀNG"),
-                        _buildCardSection(
-                          child: Column(
-                            children: [
-                              _buildPriceTile("Tổng đơn hàng", subtotal),
-                              _buildPriceTile("Phí vận chuyển", shippingFee),
-                              Container(
-                                color: MyColors.darkGreyColor,
-                                height: 1,
-                              ),
-                              _buildPriceTile("Tổng tiền", total),
-                            ],
+                          _buildSectionTitle("GIÁ TRỊ ĐƠN HÀNG"),
+                          _buildCardSection(
+                            child: Column(
+                              children: [
+                                _buildPriceTile("Tổng đơn hàng", subtotal),
+                                _buildPriceTile("Phí vận chuyển", shippingFee),
+                                Container(
+                                  color: MyColors.darkGreyColor,
+                                  height: 1,
+                                ),
+                                _buildPriceTile("Tổng tiền", total),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Positioned(
-                  bottom: 20,
-                  left: 16,
-                  right: 16,
-                  child: MyButton(
-                    text: "Xác nhận đơn hàng",
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => PaymentScreen3(currentStep: 3,total: total,),
-                          transitionsBuilder: (_, animation, __, child) {
-                            final offset = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
-                                .chain(CurveTween(curve: Curves.ease))
-                                .animate(animation);
-                            return SlideTransition(position: offset, child: child);
-                          },
-                          transitionDuration: const Duration(milliseconds: 300),
-                        ),
-                      );
-                    },
+                  Positioned(
+                    bottom: 20,
+                    left: 16,
+                    right: 16,
+                    child: MyButton(
+                      text: "Xác nhận đơn hàng",
+                      onPressed: () async{
+                        final pref = await SharedPreferences.getInstance();
+                        await pref.setString("paymentMethod", selectedPaymentMethod);
+                        await pref.setDouble("shippingFee", shippingFee);
+
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (_, __, ___) => PaymentScreen3(currentStep: 3,total: total,),
+                            transitionsBuilder: (_, animation, __, child) {
+                              final offset = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+                                  .chain(CurveTween(curve: Curves.ease))
+                                  .animate(animation);
+                              return SlideTransition(position: offset, child: child);
+                            },
+                            transitionDuration: const Duration(milliseconds: 300),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

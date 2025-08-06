@@ -58,19 +58,20 @@ class SuccessfulScreen extends StatelessWidget {
                 MyButton(
                   text: "Quay lại trang chủ",
                    onPressed: (){
-                    Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder: (_, __, ___) => MainScreen(isLoggedIn: true,indexPage: 0,),
-                          transitionsBuilder: (_, animation, __, child) {
-                            final offset = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
-                                .chain(CurveTween(curve: Curves.ease))
-                                .animate(animation);
-                            return SlideTransition(position: offset, child: child);
-                          },
-                          transitionDuration: const Duration(milliseconds: 300),
-                        ),
-                      );
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => MainScreen(isLoggedIn: true, indexPage: 0),
+                        transitionsBuilder: (_, animation, __, child) {
+                          final offset = Tween(begin: const Offset(1.0, 0.0), end: Offset.zero)
+                              .chain(CurveTween(curve: Curves.ease))
+                              .animate(animation);
+                          return SlideTransition(position: offset, child: child);
+                        },
+                        transitionDuration: const Duration(milliseconds: 300),
+                      ),
+                      (Route<dynamic> route) => false, // Xóa hết stack
+                    );
                    },
                 ),
                 MyButton(text: "Quay lại về giỏ hàng",isOutlined: true, onPressed: (){},),
