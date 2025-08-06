@@ -99,7 +99,10 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Lỗi: ${snapshot.error}'));
                       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('Không có địa chỉ nào.'));
+                        return Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: const Center(child: Text('Không có địa chỉ nào.')),
+                        );
                       }
 
                       final listAddress = snapshot.data!;

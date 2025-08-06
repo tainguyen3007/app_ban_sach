@@ -234,7 +234,7 @@ static void seedOrders() async {
     totalAmount: 330.0,
     discount: 30.0,
     shippingFee: 20.0,
-    createdAt: DateTime.now().toIso8601String(),
+    createdAt: DateTime.now().toString(),
     shippingAddressId: 'a001',
     paymentMethod: 'Tiền mặt',
     status: 'Chờ xác nhận',

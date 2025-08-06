@@ -16,7 +16,6 @@ class OrderService {
   static Future<List<MyOrder.Order>> getOrdersByUser(String userId) async {
     final querySnapshot = await ordersCollection
         .where('userId', isEqualTo: userId)
-        .orderBy('createdAt', descending: true)
         .get();
 
     return querySnapshot.docs.map((doc) {
