@@ -8,6 +8,7 @@ import 'package:app_ban_sach/firebase_cloud/models/address.dart';
 import 'package:app_ban_sach/firebase_cloud/service/address_service.dart';
 import 'package:app_ban_sach/firebase_cloud/service/user_service.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PaymentScreen1 extends StatefulWidget {
   final int currentStep; // 1, 2, 3
@@ -23,9 +24,8 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController addressController = TextEditingController();
 
-  final List<String> _cities = DataCity.cities;
-  String? _selectedCity;
   String selectedAddressId = '';
+
   Future<List<Address>>? _futureAddresses;
     Future<List<Address>> fetchAddress() async {
     try {
@@ -40,7 +40,14 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
   }
   @override
   void initState() {
-    _futureAddresses = fetchAddress();
+    _futureAddresses = fetchAddress().then((addresses) {
+    if (addresses.isNotEmpty && selectedAddressId.isEmpty) {
+      setState(() {
+        selectedAddressId = addresses.first.id;
+      });
+    }
+    return addresses;
+  });
     super.initState();
   }
 
@@ -95,15 +102,15 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
                         return const Center(child: Text('Không có địa chỉ nào.'));
                       }
 
-                      final addresses = snapshot.data!;
+                      final listAddress = snapshot.data!;
                       return Column(
                         children: [
                           ListView.builder(
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            itemCount: addresses.length,
+                            itemCount: listAddress.length,
                             itemBuilder: (context, index) {
-                              final address = addresses[index];
+                              final address = listAddress[index];
                               return Padding(
                                 padding: const EdgeInsets.symmetric(vertical: 4),
                                 child: _buildAddressCard(
@@ -136,6 +143,8 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
             child: MyButton(
               text: "Giao đến địa chỉ này",
               onPressed: () async {
+                final pref = await SharedPreferences.getInstance();
+                pref.setString('addressId', selectedAddressId);
                 await Navigator.push(
                   context,
                   PageRouteBuilder(
@@ -144,7 +153,6 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
                       const begin = Offset(1.0, 0.0); // bắt đầu từ bên phải
                       const end = Offset.zero;       // kết thúc tại vị trí hiện tại
                       const curve = Curves.ease;
-
                       final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
                       final offsetAnimation = animation.drive(tween);
 

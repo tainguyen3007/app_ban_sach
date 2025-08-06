@@ -1,5 +1,6 @@
 
 import 'dart:async';
+import 'package:app_ban_sach/features/ui/widgets/button.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/features/ui/widgets/banner_slider.dart';
@@ -14,12 +15,13 @@ import 'package:app_ban_sach/features/ui/screens/search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
+  
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  
   late final Future<List<Product>> _fetchProducts;
   late final Future<List<Category>> _fetchCategories;
 
@@ -33,7 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final Duration _trendingInterval = Duration(seconds: 3);
   final Duration _discountInterval = Duration(seconds: 4);
   final double _searchBarHeight = 50;
-  final double _searchBarWidth = 500;
   final double _cardWidth = 200;
 
   final List<CategoryGridItem> categoriesGrid = [
@@ -85,13 +86,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildSearchBar() {
     return Container(
-      width: _searchBarWidth,
       height: _searchBarHeight,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Row(
         children: [
           const Icon(Icons.search, color: Colors.grey),
@@ -108,11 +108,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchScreen()));
               },
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.close, color: Colors.grey),
-            onPressed: () => FocusScope.of(context).unfocus(),
-            splashRadius: 18,
           ),
         ],
       ),
@@ -148,8 +143,9 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         SizedBox(
-          height: 220,
+          height: 250,
           child: ListView.builder(
+            shrinkWrap: true,
             controller: controller,
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -345,80 +341,56 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          _buildSearchBar(),
+                          Expanded(child: _buildSearchBar()),
                         ],
                       ),
                       const SizedBox(height: 8),
-                      const HomeBannerSlider(),
+                      HomeBannerSlider(),
                       
                     ],
                   ),
                 ),
                 _buildCategoriesGrid(),
-                _buildHorizontalSection(
-                  title: 'Xu hướng hôm nay',
-                  icon: Icons.trending_up_rounded,
-                  color: MyColors.primaryColor,
-                  products: trending.take(10).toList(),
-                  controller: _trendingScrollController,
-                  isSmallCard: true,
+                _buildListViewProducts(
+                  title: "Xu hướng hôm nay",
+                  listProducts:  trending.take(trending.length>=5? 10 : trending.length).toList(), 
+                  maxCount: 5,
+                   icon: Icon(
+                    Icons.trending_up, color: MyColors.primaryColor,
+                  )
                 ),
-                _buildHorizontalSection(
-                  title: 'Sách HOT-Giảm giá',
-                  icon: Icons.local_fire_department,
-                  color: MyColors.primaryColor,
-                  products: discount.take(6).toList(),
-                  controller: _discountScrollController,
-                  isSmallCard: true,
+                _buildListViewProducts(
+                  title: "Sách HOT - Giảm giá",
+                  listProducts:  discount.take(discount.length>=5? 10 : discount.length).toList(), 
+                  maxCount: 5,
+                   icon: Icon(
+                    Icons.discount, color: MyColors.primaryColor,
+                  )
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.menu_book_rounded, color: MyColors.primaryColor),
-                      const SizedBox(width: 10),
-                      Text(
-                        "Gợi ý sách",
-                        style: TextStyle(
-                          color: MyColors.primaryColor,
-                          fontSize: MyTextStyle.size_20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                _buildListViewProducts(
+                  title: "Gợi ý",
+                  listProducts:  products, 
+                  maxCount:  5,
+                   icon: Icon(
+                    Icons.menu_book, color: MyColors.primaryColor,
+                    )
                   ),
-                ),
-                SizedBox(
-                  height: 300,
-                  child: _buildListViewProductsByCategory(products, 6),
-                ),
-                SizedBox(
-                  width: 200,
-                  child: MyButton(
-                    text: "Xem thêm",
-                    isOutlined: true,
-                    onPressed: (){
-                      
-                    },
-                  ),
-                ),
                 GridView.count(
                   shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
+                  physics: NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,
                   mainAxisSpacing: 10,
                   crossAxisSpacing: 10,
                   childAspectRatio: 0.55,
                   padding: const EdgeInsets.all(10),
                   children: products
-                      .map(
-                        (product) => GestureDetector(
-                          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailScreen(product: product))),
-                          child: ProductCard(product: product),
-                        ),
-                      )
-                      .toList(),
+                    .map(
+                      (product) => GestureDetector(
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProductDetailScreen(product: product))),
+                        child: ProductCard(product: product),
+                      ),
+                    )
+                    .toList(),
                 ),
               ],
             ),
@@ -427,33 +399,76 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
-Widget _buildListViewProductsByCategory(List<Product> products, int maxCount){
-  return ListView.builder(
-    shrinkWrap: true,
-    scrollDirection: Axis.horizontal,
-    padding: const EdgeInsets.symmetric(horizontal: 10),
-    itemCount: products.length >= maxCount ? maxCount : products.length,
-    itemBuilder: (context, index) {
-      final product = products[index];
-      return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => ProductDetailScreen(product: product),
-            ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.only(right: 10),
-          child: Column(
+  Widget _buildListViewProducts({
+    Icon? icon,
+    required String title,
+    required List<Product> listProducts,
+    required int maxCount
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
             children: [
-              ProductCard(product: product),
+              icon ?? SizedBox.shrink(),
+              SizedBox(width: 10),
+              Text(
+                title,
+                style: TextStyle(
+                  color: MyColors.primaryColor,
+                  fontSize: MyTextStyle.size_20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ],
           ),
         ),
-      );
-    },
-  );
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: listProducts.take(maxCount).map((product) {
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ProductDetailScreen(product: product),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: ProductCard(product: product),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+        SizedBox(
+          width: 200,
+          child: MyButton(
+            text: "Xem thêm",
+            isOutlined: true,
+            onPressed: (){
+                          
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class CategoryGridItem {
+  final String imagePath;
+  final String label;
+ 
+
+  const CategoryGridItem({
+    required this.imagePath,
+    required this.label,
+   
+  });
 }

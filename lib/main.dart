@@ -21,7 +21,6 @@ Future<void> main() async {
   final prefs = await SharedPreferences.getInstance(); 
   final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
   final userId = prefs.getString('userId') ?? 'null';
-
   if (isLoggedIn) {
     try {
       final user = await UserService.getUserByUid(userId);
