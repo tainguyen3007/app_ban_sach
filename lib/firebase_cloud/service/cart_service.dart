@@ -107,5 +107,16 @@ class CartService {
 
     return result;
   }
+  /// ✅ Xóa các sản phẩm đã chọn (isChecked = true) sau khi đặt hàng
+  static Future<void> clearCheckedCart(String userId) async {
+    final query = await _cartRef
+        .where('userId', isEqualTo: userId)
+        .where('isChecked', isEqualTo: true)
+        .get();
+
+    for (var doc in query.docs) {
+      await doc.reference.delete();
+    }
+  }
 
 }

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app_ban_sach/firebase_cloud/models/order.dart' as MyOrder;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OrderService {
   static final CollectionReference ordersCollection =
@@ -40,5 +41,15 @@ class OrderService {
   // Xóa đơn hàng (nếu cần)
   static Future<void> deleteOrder(String orderId) async {
     await ordersCollection.doc(orderId).delete();
+  }
+  //Lấy phương thúc thanh toán đươc chọn
+  static Future<String> getPaymentMethod()async{
+    final pref = await SharedPreferences.getInstance();
+    return await pref.getString("paymentMethod")?? 'COD';
+  }
+  //Lấy giá ship
+  static Future<double> getShippingFee()async{
+    final pref = await SharedPreferences.getInstance();
+    return pref.getDouble("shippingFee")?? 0;
   }
 }

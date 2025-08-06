@@ -1,4 +1,5 @@
 import 'package:app_ban_sach/core/constants/style.dart';
+import 'package:app_ban_sach/features/ui/screens/order_detail_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/firebase_cloud/models/order.dart';
 import 'package:app_ban_sach/firebase_cloud/service/order_service.dart';
@@ -50,48 +51,140 @@ class _OrderScreenState extends State<OrderScreen> {
       },
     );
   }
+final Map<String, bool> _expandedOrders = {};
 
-  Widget _buildOrderCard(Order order) {
-    return Card(
+Widget _buildOrderCard(Order order) {
+  final isExpanded = _expandedOrders[order.id] ?? false;
+
+  final displayedItems = isExpanded
+      ? order.orderItems
+      : order.orderItems.take(1).toList();
+  
+  return InkWell(
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => OrderDetailScreen(order: order),
+        ),
+      );
+    },
+    child: Card(
       color: MyColors.whiteColor,
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Đơn hàng: #${order..id}"),
-                Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: MyColors.errorColor,
-                    borderRadius: BorderRadius.circular(10)
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Trạng thái đơn hàng
+            Align(
+              alignment: Alignment.topRight,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: MyColors.primaryColor,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  order.status,
+                  style: const TextStyle(color: Colors.white,fontSize: MyTextStyle.size_11,fontWeight: MyTextStyle.semibold),
+                ),
+              ),
+            ),
+    
+            const SizedBox(height: 8),
+            Text("Đơn hàng: #${order.id}", style: TextStyle(
+              fontSize: MyTextStyle.size_16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 4),
+            Text("Ngày đặt: ${order.createdAt}", style: TextStyle(
+              fontSize: MyTextStyle.size_13, color: MyColors.darkGreyColor)),
+            const SizedBox(height: 8),
+            const Divider(),
+    
+            // Danh sách sản phẩm (1 hoặc tất cả)
+            Column(
+              children: displayedItems.map((item) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          item.imageUrl,
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.scaleDown,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(item.productName,
+                              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+                              maxLines: 2, overflow: TextOverflow.ellipsis),
+                            const SizedBox(height: 4),
+                            Text("x${item.quantity}"),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(MyTextStyle.formatCurrency(item.price),
+                                  style: const TextStyle(color: Colors.red)),
+                              ],
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
-                  child: Text(order.status),
-                )
-              ],
+                );
+              }).toList(),
             ),
-          ),
-          ListTile(
-            title: Text("Đơn hàng #${order.id}",style: TextStyle(fontSize: MyTextStyle.size_13),),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Tổng tiền: ${order.totalAmount.toStringAsFixed(0)} đ"),
-                Text("Trạng thái: ${order.status}"),
-                Text("Ngày đặt: ${order.createdAt}"),
-              ],
+    
+            // Nút Xem thêm
+            if (!isExpanded && order.orderItems.length > 1)
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _expandedOrders[order.id] = true;
+                  });
+                },
+                child: const Text("Xem thêm sản phẩm",style: TextStyle(color: MyColors.darkGreyColor),),
+              ),
+            if (isExpanded)
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    _expandedOrders[order.id] = false;
+                  });
+                },
+                child: const Text("Ẩn",style: TextStyle(color: MyColors.darkGreyColor),),
+              ),
+            const Divider(),
+    
+            // Tổng tiền
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                "Tổng tiền: ${MyTextStyle.formatCurrency(order.totalAmount)}",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: MyTextStyle.size_16,
+                ),
+              ),
             ),
-            onTap: () {
-              // TODO: Navigate to order detail screen
-            },
-          ),
-        ],
+          ],
+        ),
       ),
-    );
-  }
+    ),
+  );
+}
+
+
 
   @override
   Widget build(BuildContext context) {
