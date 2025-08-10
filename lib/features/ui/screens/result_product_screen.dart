@@ -6,9 +6,10 @@ import 'package:app_ban_sach/features/ui/screens/detail_product_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart';
 
 class ResultProductScreen extends StatefulWidget {
+  bool? resultByCategory;
   final String keyword;
 
-  const ResultProductScreen({Key? key, required this.keyword}) : super(key: key);
+  ResultProductScreen({super.key, required this.keyword,this.resultByCategory});
 
   @override
   State<ResultProductScreen> createState() => _ResultProductScreenState();
@@ -30,7 +31,12 @@ class _ResultProductScreenState extends State<ResultProductScreen> {
   @override
   void initState() {
     super.initState();
-    _searchResults = ProductService.searchProductsByName1(widget.keyword);
+    if (widget.resultByCategory == true){
+      _searchResults = ProductService.getProductsByCategory(widget.keyword);
+    }
+    else {
+      _searchResults = ProductService.searchProductsByName1(widget.keyword);
+    }
   }
 
   void _onSortChanged(String? newSort) {
@@ -70,7 +76,7 @@ class _ResultProductScreenState extends State<ResultProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MyAppBar(
-        title: "Kết quả: \"${widget.keyword}\"",
+        title: "Kết quả",
         showSearchField: false,
       ),
       body: Column(
