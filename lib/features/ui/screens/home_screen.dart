@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
             title: Text(category.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () => {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => ResultProductScreen(keyword: category.name,)))
+              Navigator.push(context, MaterialPageRoute(builder: (_) => ResultProductScreen(keyword: category.id.toString(),resultByCategory: true,)))
             },
           ),
         );
