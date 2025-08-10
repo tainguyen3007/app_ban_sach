@@ -1,12 +1,14 @@
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/data/models/user.dart' as User;
+import 'package:app_ban_sach/firebase_cloud/models/user.dart' as UserLocal;
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/button.dart';
 import 'package:app_ban_sach/features/ui/widgets/text_field.dart';
 import 'package:app_ban_sach/firebase_cloud/service/user_service.dart';
+import 'package:app_ban_sach/main.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app_ban_sach/firebase_cloud/models/user.dart' as User_firebase;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -25,7 +27,7 @@ class _LoginState extends State<RegisterScreen> {
   TextEditingController passController = TextEditingController();
   TextEditingController passConfirmController = TextEditingController();
   
-  Future<void> register() async {
+  Future<void> onClickRegister() async {
     final email = emailController.text.trim();
     final name = nameController.text.trim();
     final phone = phoneNumberController.text.trim();
@@ -64,7 +66,10 @@ class _LoginState extends State<RegisterScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Đăng ký thành công!')),
         );
-
+        final pref = await SharedPreferences.getInstance();
+        final userId = pref.setString('userId', email);
+        pref.setBool('isLoggedIn', true);
+        Navigator.push(context, MaterialPageRoute(builder: (_) => MainScreen(isLoggedIn: true, indexPage: 3,userId: userId.toString(),)));
       }
       else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -80,20 +85,6 @@ class _LoginState extends State<RegisterScreen> {
     } finally {
       setState(() => isLoading = false);
     }
-  }
-  Future<void> _onClickRegister() async {
-    final email = emailController.text.trim();
-    final name = nameController.text.trim();
-    final phone = phoneNumberController.text.trim();
-    final pass = passController.text.trim();
-    final passConfirm = passConfirmController.text.trim();
-
-    
-
-    // Thông báo & chuyển sang trang user/profile
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đăng ký thành công!')),
-    );
   }
 
   @override
@@ -152,7 +143,7 @@ class _LoginState extends State<RegisterScreen> {
                       const SizedBox(height: 10),
                       MyButton(
                         text: 'Đăng ký tài khoản',
-                        onPressed: register,
+                        onPressed: onClickRegister,
                       ),
                       const Spacer(), // Đẩy nội dung lên nếu dư chiều cao
                     ],

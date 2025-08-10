@@ -14,7 +14,7 @@ class User {
     required this.email,
     required this.password,
     this.name,
-    this.birthday = "2000/10/10",
+    this.birthday = "2000/1/1",
     this.gender = 1,
     required this.phoneNumber,
     this.role = 'user',

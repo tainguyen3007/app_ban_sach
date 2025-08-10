@@ -42,9 +42,9 @@ class _LoginState extends State<LoginScreen> {
       final authUser = user_fb.User(
         email: user?.email ?? 'guest@gmail.com',
         name: user?.displayName ?? "Guest",
-        password: '',
+        password: user.hashCode.toString() ?? "",
         phoneNumber: user?.phoneNumber ?? "No phone number",
-        avatar: user?.photoURL ?? "assets/default_images/default_avatar.jpg",
+        avatar: user?.photoURL ?? "assets/default_images/default_avatar.jpg", 
       );
 
       await UserService.saveUser(authUser);
@@ -92,7 +92,7 @@ class _LoginState extends State<LoginScreen> {
     });
   }
   Future<void> _onClickLogin() async {
-    final email = phoneController.text.trim(); // hoặc dùng email nếu app bạn login bằng email
+    final email = phoneController.text.trim();
     final password = passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
@@ -101,7 +101,70 @@ class _LoginState extends State<LoginScreen> {
       );
       return;
     }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // ✅ Đăng nhập với Firebase Auth
+      final credential = await auth.FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+
+      final user = credential.user;
+      if (user == null) throw Exception("Tài khoản không tồn tại");
+
+      // ✅ Lấy thông tin user từ Firestore
+      final userModel = await UserService.getUserByUid(user.uid);
+
+      // ✅ Lưu vào SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('userId', user.uid);
+
+      if (!mounted) return;
+
+      // ✅ Hiện thông báo và điều hướng
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Đăng nhập thành công")),
+      );
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MainScreen(
+            isLoggedIn: true,
+            indexPage: 3,
+            user: userModel,
+          ),
+        ),
+        (route) => false,
+      );
+    } on auth.FirebaseAuthException catch (e) {
+      String message = "Đăng nhập thất bại.";
+      if (e.code == 'user-not-found') {
+        message = "Không tìm thấy tài khoản.";
+      } else if (e.code == 'wrong-password') {
+        message = "Mật khẩu không đúng.";
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Đã xảy ra lỗi: ${e.toString()}")),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
