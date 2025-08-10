@@ -1,6 +1,6 @@
 import 'package:app_ban_sach/core/constants/style.dart';
 import 'package:app_ban_sach/data/models/address_data.dart';
-import 'package:app_ban_sach/features/ui/screens/add_address_screen.dart';
+import 'package:app_ban_sach/features/ui/screens/address_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/payment/payment_screen_2.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/button.dart';
@@ -118,11 +118,22 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
                                 padding: const EdgeInsets.symmetric(vertical: 4),
                                 child: _buildAddressCard(
                                   address:  address,
-                                  onTap: onTapItemAddress,
+                                  onTap: () => onTapItemAddress(address),
                                   groupValue: selectedAddressId,
                                   onChanged: (value) {
                                     setState(() {
                                       selectedAddressId = value!;
+                                    });
+                                  },
+                                  onDeleted: () {
+                                    setState(() {
+                                      _futureAddresses = fetchAddress().then((addresses) {
+                                        // Nếu địa chỉ bị xoá là đang được chọn thì chọn địa chỉ đầu tiên
+                                        if (!addresses.any((a) => a.id == selectedAddressId) && addresses.isNotEmpty) {
+                                          selectedAddressId = addresses.first.id;
+                                        }
+                                        return addresses;
+                                      });
                                     });
                                   },
                                 ),
@@ -247,9 +258,35 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
     required String groupValue, // địa chỉ ID được chọn
     required Function(String?) onChanged, // callback khi chọn
     required VoidCallback onTap, // nhấn vào để sửa
+    VoidCallback? onDeleted,
   }) {
     return InkWell(
       onTap: onTap,
+      onLongPress: () {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text("Xác nhận xóa"),
+              content: const Text("Bạn có chắc chắn muốn xóa địa chỉ này không?"),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context), // Hủy
+                  child: const Text("Hủy"),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    Navigator.pop(context); // Đóng dialog
+                    await AddressService.deleteAddress(address.id);
+                    if (onDeleted != null) onDeleted(); // Gọi callback load lại danh sách nếu có
+                  },
+                  child: const Text("Xóa", style: TextStyle(color: Colors.red)),
+                ),
+              ],
+            );
+          },
+        );
+      },
       borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.all(10),
@@ -288,11 +325,14 @@ class _PaymentScreen1State extends State<PaymentScreen1> {
       ),
     );
   }
-  void onTapItemAddress() async {
+  void onTapItemAddress(Address selectedAddress) async {
     await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddressScreen(),
+        builder: (context) => AddressScreen(
+          isEdit: true,
+          address: selectedAddress,
+        ),
       ),
     ).then((shouldRefresh) {
       if (shouldRefresh == true) {
