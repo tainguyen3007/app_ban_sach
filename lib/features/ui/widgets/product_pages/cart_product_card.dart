@@ -1,35 +1,19 @@
-import 'dart:ffi';
-import 'package:intl/intl.dart'; // Thêm thư viện intl
-import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/features/ui/widgets/text_field.dart';
+import 'package:app_ban_sach/firebase_cloud/service/cart_service.dart';
 import 'package:flutter/material.dart';
-class CartItem {
-  String imageUrl;
-  String productName;
-  double price;
-  double totalPrice;
-  double oldPrice;
-  bool isChecked;
-
-  CartItem({
-    required this.imageUrl,
-    required this.productName,
-    required this.price,
-    required this.oldPrice,
-    this.isChecked = false,
-  }): totalPrice = price;
-}
+import 'package:app_ban_sach/core/constants/style.dart';
 
 class CartProductCard extends StatefulWidget {
-  CartItem item;
-  final ValueChanged<bool?> onChanged;
-  VoidCallback? onRemove; // Hàm xử lý khi nhấn nút xóa
+  final CartItemWithProduct item;
+  final ValueChanged<bool?>? onChanged;
+  final VoidCallback? onRemove;
+  final VoidCallback? onQuantityChanged;
 
-  CartProductCard({
+  const CartProductCard({
+    super.key,
     required this.item,
     required this.onChanged,
+    this.onQuantityChanged,
     this.onRemove,
-    super.key,
   });
 
   @override
@@ -37,136 +21,157 @@ class CartProductCard extends StatefulWidget {
 }
 
 class _CartProductCardState extends State<CartProductCard> {
-  int quantity = 1; // Số lượng sản phẩm
-  double get totalPrice => widget.item.price * quantity;
-  void _increaseQuantity() {
-    setState(() {
-      quantity++;
-      widget.item.totalPrice = totalPrice;
-    });
+  late int quantity;
+  double get totalPrice => widget.item.product.price * quantity;
+
+  @override
+  void initState() {
+    super.initState();
+    quantity = widget.item.cart.quantity;
   }
-  void _decreaseQuantity() {
-    setState(() {
-      if (quantity > 1) {
-        quantity--;
-        widget.item.totalPrice = totalPrice;
+
+  Future<void> _updateQuantity(int change) async {
+    final newQuantity = quantity + change;
+
+    if (newQuantity < 1) {
+      // Nếu muốn xóa khi về 0:
+      if (widget.onRemove != null) {
+        await CartService.deleteCart(widget.item.cart.id!);
+        widget.onRemove!();
       }
-    });
-  }
-  void onChangedCheckedBox(bool? value) {
+      return;
+    }
+
     setState(() {
-      widget.item?.isChecked = value ?? true;
+      quantity = newQuantity;
+      widget.item.cart.quantity = quantity;
     });
+
+    // Cập nhật trên Firebase
+    if (widget.item.cart.id != null) {
+      await CartService.updateCart(widget.item.cart);
+    }
+
+    // Báo về cha cập nhật tổng giá
+    if (widget.onQuantityChanged != null) {
+      widget.onQuantityChanged!();
+    }
   }
+
+  Widget _buildQuantityControl() {
+    return Row(
+      children: [
+        _iconButton(Icons.remove, () => _updateQuantity(-1)),
+        Container(
+          width: 30,
+          height: 30,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(color: MyColors.greyColor),
+          child: Text(
+            '$quantity',
+            style: const TextStyle(
+              fontSize: MyTextStyle.size_13,
+              fontWeight: MyTextStyle.bold,
+            ),
+          ),
+        ),
+        _iconButton(Icons.add, () => _updateQuantity(1)),
+      ],
+    );
+  }
+
+  Widget _iconButton(IconData icon, VoidCallback onPressed) {
+    return SizedBox(
+      width: 30,
+      height: 30,
+      child: IconButton(
+        icon: Icon(icon, size: 16),
+        onPressed: onPressed,
+        padding: EdgeInsets.zero,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final item = widget.item;
     return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10), // Bo góc card
-      ),
-      elevation: 2, // Đổ bóng card
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10),
         child: Row(
           children: [
+            // Checkbox
             SizedBox(
               width: 20,
               child: Checkbox(
-                value: widget.item?.isChecked,
+                value: item.cart.isChecked,
                 onChanged: widget.onChanged,
-                fillColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
-                  if (states.contains(MaterialState.selected)) {
-                    return MyColors.warningColor; // Màu khi được chọn
-                  }
-                  return MyColors.whiteColor; // Màu khi không được chọn
-                }),
-              )
-            ),
-            // Hình ảnh sản phẩm
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10), // Bo góc hình ảnh
-              child: Image.asset(
-                widget.item?.imageUrl ?? "assets/sgk_tv_2_1_.jpg",
-                height: 120,
-                width: 120,
-                fit: BoxFit.scaleDown,
+                fillColor: MaterialStateProperty.resolveWith<Color>(
+                  (states) => states.contains(MaterialState.selected)
+                      ? MyColors.warningColor
+                      : MyColors.whiteColor,
+                ),
               ),
             ),
+            // Image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: item.product.imageUrl == ''
+                  ? Image.asset(
+                      "assets/default_images/default_image.png",
+                      height: 120,
+                      width: 120,
+                      fit: BoxFit.scaleDown,
+                    )
+                  : Image.asset(
+                      item.product.imageUrl,
+                      height: 120,
+                      width: 120,
+                      fit: BoxFit.scaleDown,
+                    ),
+            ),
             const SizedBox(width: 10),
-            // Thông tin sản phẩm
+            // Product info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.item?.productName?? "Name product",
+                    item.product.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: MyTextStyle.size_13,
                       fontWeight: FontWeight.bold,
                     ),
-                    maxLines: 2, // Hiển thị tối đa 2 dòng
-                    overflow: TextOverflow.ellipsis, // Cắt chữ nếu quá dài
                   ),
                   const SizedBox(height: 2),
                   Text(
                     MyTextStyle.formatCurrency(totalPrice),
                     style: const TextStyle(
                       fontSize: MyTextStyle.size_13,
-                      fontWeight: MyTextStyle.semibold,
-                      color: MyColors.primaryColor, // Màu sắc cho giá
+                      fontWeight: MyTextStyle.bold,
+                      color: MyColors.primaryColor,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    MyTextStyle.formatCurrency(widget.item.oldPrice),
+                    MyTextStyle.formatCurrency(item.product.oldprice),
                     style: const TextStyle(
                       fontSize: MyTextStyle.size_13,
-                      color: MyColors.darkGreyColor, // Màu sắc cho giá cũ
-                      decoration: TextDecoration.lineThrough, // Gạch ngang
+                      color: MyColors.darkGreyColor,
+                      decoration: TextDecoration.lineThrough,
                     ),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // Nút tăng giảm số lượng
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: IconButton(
-                              icon: const Icon(Icons.remove, size: 16),
-                              onPressed: _decreaseQuantity,
-                            ),
-                          ),
-                          Container(
-                            width: 30,
-                            height: 30,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: MyColors.greyColor
-                            ),
-                            child: Text(
-                              '$quantity',
-                              style: const TextStyle(
-                                fontSize: MyTextStyle.size_13,
-                                fontWeight: MyTextStyle.bold,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: IconButton(
-                              icon: const Icon(Icons.add, size: 16),
-                              onPressed: _increaseQuantity,
-                            ),
-                          ),
-                        ],
-                      ),
-                      // Nút xóa sản phẩm
+                      _buildQuantityControl(),
                       IconButton(
-                        icon: const Icon(Icons.delete, color: MyColors.errorColor),
+                        icon: const Icon(Icons.delete,
+                            color: MyColors.errorColor),
                         onPressed: widget.onRemove,
                       ),
                     ],

@@ -1,4 +1,7 @@
+import 'package:app_ban_sach/data/models/Notification.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
+import 'package:app_ban_sach/features/ui/widgets/notification_card.dart';
+
 import 'package:flutter/material.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -9,16 +12,52 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
+  List<MyNotification> listNotifi = [
+    MyNotification(
+      title: "Cập nhât đơn hàng", 
+      text: "Bạn vừa đăng kí tài khoản tại Tri Thức Store? Hãy cập nhật email ngay để nhận đc các thông báo quà tặng dành cho khách hàng mới! Click ngay vào đây để cập nhật. Đừng quên tiếp tục tham gia mua sắm để nhận được những ưu đã dành riêng cho khách hàng tại Tri Thức Store.", 
+      date: DateTime.now()
+      ),
+      MyNotification(
+      title: "Cập nhât đơn hàng", 
+      text: "Bạn vừa đăng kí tài khoản tại Tri Thức Store? Hãy cập nhật email ngay để nhận đc các thông báo quà tặng dành cho khách hàng mới! Click ngay vào đây để cập nhật. Đừng quên tiếp tục tham gia mua sắm để nhận được những ưu đã dành riêng cho khách hàng tại Tri Thức Store.", 
+      date: DateTime.now()
+      ),
+      MyNotification(
+      title: "Cập nhât đơn hàng", 
+      text: "Bạn vừa đăng kí tài khoản tại Tri Thức Store? Hãy cập nhật email ngay để nhận đc các thông báo quà tặng dành cho khách hàng mới! Click ngay vào đây để cập nhật. Đừng quên tiếp tục tham gia mua sắm để nhận được những ưu đã dành riêng cho khách hàng tại Tri Thức Store.", 
+      date: DateTime.now()
+      ),
+
+      MyNotification(
+      title: "Cập nhât đơn hàng", 
+      text: "Bạn vừa đăng kí tài khoản tại Tri Thức Store? Hãy cập nhật email ngay để nhận đc các thông báo quà tặng dành cho khách hàng mới! Click ngay vào đây để cập nhật. Đừng quên tiếp tục tham gia mua sắm để nhận được những ưu đã dành riêng cho khách hàng tại Tri Thức Store.", 
+      date: DateTime.now()
+      ),
+      MyNotification(
+      title: "Cập nhât đơn hàng", 
+      text: "Bạn vừa đăng kí tài khoản tại Tri Thức Store? Hãy cập nhật email ngay để nhận đc các thông báo quà tặng dành cho khách hàng mới! Click ngay vào đây để cập nhật. Đừng quên tiếp tục tham gia mua sắm để nhận được những ưu đã dành riêng cho khách hàng tại Tri Thức Store.", 
+      date: DateTime.now()
+      ),
+      MyNotification(
+      title: "Cập nhât đơn hàng", 
+      text: "Bạn vừa đăng kí tài khoản tại Tri Thức Store? Hãy cập nhật email ngay để nhận đc các thông báo quà tặng dành cho khách hàng mới! Click ngay vào đây để cập nhật. Đừng quên tiếp tục tham gia mua sắm để nhận được những ưu đã dành riêng cho khách hàng tại Tri Thức Store.", 
+      date: DateTime.now()
+      ),
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: 'Thông báo', showBackButton: false),
+      appBar: MyAppBar(title: 'Thông báo', showBackButton: true,),
       body: Container(
-        padding: const EdgeInsets.all(20.0),
-        child: Center(
-          child: Text(
-            'Chức năng thông báo sẽ được cập nhật trong tương lai',
-            style: TextStyle(fontSize: 20, color: Colors.black54),
+        padding: const EdgeInsets.all(5),
+        child: SingleChildScrollView(
+          child: Column(
+            children: List.generate(listNotifi.length, (index) {
+                  return NotificationCard(
+                    notifi: listNotifi[index],
+                  );
+                }),
           ),
         ),
       ),

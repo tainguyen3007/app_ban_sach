@@ -1,41 +1,47 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/data/models/Product.dart';
+import 'package:app_ban_sach/firebase_cloud/service/auth.service.dart';
+import 'package:app_ban_sach/data/models/product_test.dart';
+import 'package:app_ban_sach/features/ui/screens/detail_user_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/login_screen.dart';
 import 'package:app_ban_sach/features/ui/screens/order_screen.dart';
+import 'package:app_ban_sach/features/ui/screens/voucher_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
-import 'package:app_ban_sach/features/ui/widgets/product_pages/card_product.dart';
 import 'package:app_ban_sach/features/ui/widgets/list_tile.dart';
 import 'package:app_ban_sach/features/ui/widgets/order_status_tab.dart';
 import 'package:app_ban_sach/features/ui/widgets/user_profile.dart';
+import 'package:app_ban_sach/firebase_cloud/models/user.dart';
 import 'package:flutter/material.dart';
-
+import 'package:app_ban_sach/features/ui/screens/settings_screen.dart';
+import 'package:app_ban_sach/features/ui/screens/favorite_products_screen.dart';
 class UserScreen extends StatefulWidget {
-  const UserScreen({super.key});
+  final User? user;
+  final bool? isLoggedIn;
+  const UserScreen({super.key, this.user, this.isLoggedIn});
 
   @override
   State<UserScreen> createState() => _UserScreenState();
 }
 
 class _UserScreenState extends State<UserScreen> {
-  final List<Product> products = [
-    
-  ];
+  final List<Product> products = [];
+  //Gọi thuộc tính của user google(name, email, hình ảnh)
+  final info = AuthService().getCurrentUserInfo();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return widget.isLoggedIn == false 
+    ? LoginScreen()
+    :Scaffold(
       appBar: MyAppBar(
-        title: 'Tài khoản ',
+        title: 'Tài khoản',
         showBackButton: false,
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: MyColors.whiteColor),
             onPressed: () {
-              // Xử lý sự kiện khi nhấn nút cài đặt
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Cài đặt')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );
             },
           ),
@@ -49,12 +55,12 @@ class _UserScreenState extends State<UserScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               UserProfile(
-                name: "Tài Nguyễn",
-                username: "tai770@gmail.com",
-                onPressed: () => {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()))
-                },
-              ),
+                avatar: info['photoURL'].toString(),
+                name: info['name'].toString(),
+                username: info['email'].toString(),
+
+              )
+              ,
               const SizedBox(height: 10),
               MyListTile(
                 title: 'Đơn hàng của tôi', 
@@ -69,7 +75,12 @@ class _UserScreenState extends State<UserScreen> {
               OrderStatusTab(),
               MyListTile(
                 title: 'Sản phẩm yêu thích', 
-                onTap: (){},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const FavoriteProductsScreen()),
+                  );
+                },
                 leadingIcon: Icons.favorite_border,
               ),
               MyListTile(
@@ -79,12 +90,21 @@ class _UserScreenState extends State<UserScreen> {
               ),
               MyListTile(
                 title: 'Voucher của tôi', 
-                onTap: (){},
+                onTap: () => {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  VoucherScreen()))
+                },
                 leadingIcon: Icons.redeem_rounded,
               ),
-              // Wrap(
-              //   children: products.map((product) => ProductCard(product: product)).toList(),
-              // ),
+              MyListTile(
+                title: 'Hồ sơ của tôi', 
+                onTap: (){
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>  DetailUserScreen()),
+                  );
+                },
+                leadingIcon: Icons.person,
+              ),
             ],
           ),
         ),

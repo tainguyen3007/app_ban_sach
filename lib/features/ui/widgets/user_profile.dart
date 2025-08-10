@@ -10,7 +10,7 @@ class UserProfile extends StatefulWidget {
   UserProfile({
     this.username = "your username",
     this.name = "your name",
-    this.avatar = 'assets/google_logo.jpg',
+    this.avatar = 'assets/default_images/default_avatar.jpg',
     this.onPressed,
     super.key
   }
@@ -31,11 +31,12 @@ class _UserProfileState extends State<UserProfile> {
             onTap: widget.onPressed,
             leading: CircleAvatar(
               radius: 30,
-              backgroundImage: AssetImage(widget.avatar),
+              backgroundImage: widget.avatar.contains('assets') ? AssetImage(widget.avatar) : NetworkImage(widget.avatar),
             ),
             title: Text(
+              maxLines: 1,
               widget.username, // username
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
               widget.name,

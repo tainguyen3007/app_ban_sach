@@ -56,4 +56,17 @@ class Product {
   // Getter và Setter cho discount
   double get discount => _discount;
   set discount(double value) => _discount = value;
+
+  factory Product.fromMap(Map<String, dynamic> map) {
+    return Product(
+      id: map['id'],
+      name: map['name'],
+      description: map['description'],
+      price: map['price'] * 1.0,
+      oldPrice: (map['oldPrice'] ?? 0.0) * 1.0,
+      imageUrl: map['imageUrl'] ?? '',
+      soldCount: map['soldCount'] ?? 0,
+      discount: (map['discount'] ?? 0.0) * 1.0,
+    );
+  }
 }

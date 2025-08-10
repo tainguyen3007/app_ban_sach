@@ -1,130 +1,289 @@
+
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/features/ui/screens/user_screen.dart';
+import 'package:app_ban_sach/firebase_cloud/models/user.dart' as user_fb;
+import 'package:app_ban_sach/firebase_cloud/service/auth.service.dart';
+import 'package:app_ban_sach/firebase_cloud/service/user_service.dart';
+import 'package:app_ban_sach/features/ui/screens/register_screen.dart';
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/button.dart';
 import 'package:app_ban_sach/features/ui/widgets/text_field.dart';
+import 'package:app_ban_sach/main.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-const List<String> scopes = <String>[
-  'https://www.googleapis.com/auth/contacts.readonly',
-];
+import 'package:shared_preferences/shared_preferences.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
-
   @override
   State<LoginScreen> createState() => _LoginState();
 }
-
 class _LoginState extends State<LoginScreen> {
+  final pref = SharedPreferences.getInstance();
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
   final double paddingHorizontal = 5.0;
+
+  auth.User? user;
   
+  bool _isLoading = false;
+
+  void onClickLoginWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final auth.User? currentUser = await AuthService().signInWithGoogle();
+
+    if (currentUser != null) {
+      user = currentUser;
+      final prefs = await SharedPreferences.getInstance();
+      final isLoggedIn = await prefs.setBool('isLoggedIn', true);
+
+      final authUser = user_fb.User(
+        email: user?.email ?? 'guest@gmail.com',
+        name: user?.displayName ?? "Guest",
+        password: user.hashCode.toString() ?? "",
+        phoneNumber: user?.phoneNumber ?? "No phone number",
+        avatar: user?.photoURL ?? "assets/default_images/default_avatar.jpg", 
+      );
+
+      await UserService.saveUser(authUser);
+      await prefs.setString("userId", authUser.email);
+      await prefs.setBool("isLogginIn", true);
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Đăng nhập thành công")),
+      );
+
+      if (!mounted) return;
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MainScreen(
+            isLoggedIn: isLoggedIn,
+            indexPage: 3,
+            user: authUser,
+          ),
+        ),
+        (route) => false,
+      );
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Đăng nhập thất bại hoặc bị hủy")),
+        );
+      }
+    }
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+
+
+  void logout() async {
+    await AuthService().signOut();
+    setState(() {
+      user = null;
+    });
+  }
+  Future<void> _onClickLogin() async {
+    final email = phoneController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng nhập đủ thông tin')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // ✅ Đăng nhập với Firebase Auth
+      final credential = await auth.FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+
+      final user = credential.user;
+      if (user == null) throw Exception("Tài khoản không tồn tại");
+
+      // ✅ Lấy thông tin user từ Firestore
+      final userModel = await UserService.getUserByUid(user.uid);
+
+      // ✅ Lưu vào SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('userId', user.uid);
+
+      if (!mounted) return;
+
+      // ✅ Hiện thông báo và điều hướng
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Đăng nhập thành công")),
+      );
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MainScreen(
+            isLoggedIn: true,
+            indexPage: 3,
+            user: userModel,
+          ),
+        ),
+        (route) => false,
+      );
+    } on auth.FirebaseAuthException catch (e) {
+      String message = "Đăng nhập thất bại.";
+      if (e.code == 'user-not-found') {
+        message = "Không tìm thấy tài khoản.";
+      } else if (e.code == 'wrong-password') {
+        message = "Mật khẩu không đúng.";
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Đã xảy ra lỗi: ${e.toString()}")),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: 'Đăng nhập'),
-      body: SingleChildScrollView(
-        child: Container(  
-          color: MyColors.whiteColor,
-          padding: EdgeInsets.symmetric(horizontal: 10.0), // Thay đổi padding ngang
-          child: Container(
-            padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0), // Thêm padding trên và hai bên
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(height: paddingHorizontal), 
-                // Logo
-                Image.asset(
-                    'assets/logo_offical.png', 
-                    height: 150,
-                    width: 150,
-                  ),
-                SizedBox(height: paddingHorizontal),
-                // Nhập sdt
-                MyTextField(
-                  labelText: 'Số điện thoại',
-                  hintText: 'Nhập số điện thoại',
-                  controller: TextEditingController(),
-                  isPassword: false,
-                ),
-                // Nhập password
-                MyTextField(
-                  labelText: 'Mật khẩu',
-                  hintText: 'Nhập mật khẩu',
-                  controller: TextEditingController(),
-                  isPassword: true,
-                ),
-                // Đăng nhập button
-                MyButton(
-                  text: 'Đăng nhập', 
-                  isOutlined: false, //nút outline
-                  isDisabled: false, // nút bị vô hiêu hóa
-                  onPressed: () {
-                    // Xử lý đăng nhập ở đây
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Đăng nhập thành công!')),
-                    );
-                  },
-                ),
-                // Quên mật khẩu
-                SizedBox(
-                  height: 33,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          // Xử lý quên mật khẩu ở đây
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Chức năng quên mật khẩu chưa được triển khai!')),
-                          );
-                        },
-                        child: const Text(
-                          'Quên mật khẩu?',
-                          style: TextStyle(
-                            color: MyColors.warningColor,
-                            fontSize: MyTextStyle.size_13,),
-                        ),
+      appBar: MyAppBar(title: 'Đăng nhập',showBackButton: false,),
+      body: Stack(
+        children:[
+          SingleChildScrollView(
+            child: Container(  
+              color: MyColors.whiteColor,
+              padding: EdgeInsets.symmetric(horizontal: 10.0), // Thay đổi padding ngang
+              child: Container(
+                padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0), // Thêm padding trên và hai bên
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(height: paddingHorizontal), 
+                    // Logo
+                    Image.asset(
+                        'assets/logo_offical.png', 
+                        height: 150,
+                        width: 150,
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 37,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Bạn đã có tài khoản chưa? ",
-                        style: TextStyle(
-                          color: MyColors.textColor,
-                          fontSize: MyTextStyle.size_16,
-                          fontWeight: MyTextStyle.semibold
-                        ),
-                      ),
-                      const TextButton(
-                        onPressed: null,
-                        child: Text(
-                          'Đăng ký',
-                          style: TextStyle(
-                            color: MyColors.primaryColor,
-                            fontSize: MyTextStyle.size_16,
-                            fontWeight: MyTextStyle.semibold
+                    SizedBox(height: paddingHorizontal),
+                    // Nhập sdt
+                    MyTextField(
+                      labelText: 'Username',
+                      hintText: 'Nhập username',
+                      controller: phoneController,
+                      isPassword: false,
+                    ),
+                    // Nhập password
+                    MyTextField(
+                      labelText: 'Mật khẩu',
+                      hintText: 'Nhập mật khẩu',
+                      controller: passwordController,
+                      isPassword: true,
+                    ),
+                    // Đăng nhập button
+                    MyButton(
+                      text: 'Đăng nhập', 
+                      isOutlined: false, //nút outline
+                      isDisabled: false, // nút bị vô hiêu hóa
+                      onPressed: _onClickLogin,
+                    ),
+                    // Quên mật khẩu
+                    SizedBox(
+                      height: 33,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              // Xử lý quên mật khẩu ở đây
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Chức năng quên mật khẩu chưa được triển khai!')),
+                              );
+                            },
+                            child: const Text(
+                              'Quên mật khẩu?',
+                              style: TextStyle(
+                                color: MyColors.warningColor,
+                                fontSize: MyTextStyle.size_13,),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      height: 37,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Bạn đã có tài khoản chưa? ",
+                            style: TextStyle(
+                              color: MyColors.textColor,
+                              fontSize: MyTextStyle.size_16,
+                              fontWeight: MyTextStyle.semibold
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: (){
+                              Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => RegisterScreen(),
+                              ),
+                        );
+                            },
+                            child: const Text(
+                              'Đăng ký',
+                              style: TextStyle(
+                                color: MyColors.primaryColor,
+                                fontSize: MyTextStyle.size_16,
+                                fontWeight: MyTextStyle.semibold
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    MyButton(text: 'Đăng nhập bằng Google', 
+                      imagePath: 'assets/google_logo.jpg', // Đường dẫn hình ảnh
+                      isOutlined: true, //nút outline
+                      isDisabled: false, // nút bị vô hiêu hóa
+                      onPressed: onClickLoginWithGoogle,
+                    ),
+                  ],
                 ),
-                MyButton(text: 'Đăng nhập bằng Google', 
-                  imagePath: 'assets/google_logo.jpg', // Đường dẫn hình ảnh
-                  isOutlined: true, //nút outline
-                  isDisabled: false, // nút bị vô hiêu hóa
-                  onPressed: () async {
-                    // Xử lý đăng nhập bằng Google ở đây
-                  },
-                ),
-              ],
+              ),
             ),
           ),
-        ),
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.3),
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+        ]
       ),
     );
   }

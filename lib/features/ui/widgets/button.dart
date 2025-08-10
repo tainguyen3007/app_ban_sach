@@ -7,6 +7,7 @@ class MyButton extends StatelessWidget {
   final bool isOutlined; // Có phải dạng outline hay không
   final bool isDisabled; // Có phải dạng bị vô hiệu hóa hay không
   final String? imagePath; // Đường dẫn hình ảnh (nếu có)
+  final Color? color;
 
   const MyButton({
     required this.text,
@@ -14,6 +15,7 @@ class MyButton extends StatelessWidget {
     this.isOutlined = false,
     this.isDisabled = false,
     this.imagePath,
+    this.color,
     super.key,
   });
 
@@ -30,8 +32,9 @@ class MyButton extends StatelessWidget {
             : (isDisabled ? MyColors.greyColor : MyColors.primaryColor),
         minimumSize: const Size(double.infinity, 45), // Chiều cao tối đa 45px
         side: isOutlined
-            ? BorderSide(color: MyColors.primaryColor, width: 1) // Viền cho nút outline
+            ? BorderSide(color: color ?? MyColors.primaryColor, width: 1) // Viền cho nút outline
             : BorderSide.none, // Không có viền cho nút thường
+        
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -49,7 +52,7 @@ class MyButton extends StatelessWidget {
             text,
             style: TextStyle(
               color: isOutlined
-                  ? MyColors.primaryColor // Màu chữ cho nút outline
+                  ? color ?? MyColors.primaryColor // Màu chữ cho nút outline
                   : (isDisabled ? MyColors.darkGreyColor : MyColors.whiteColor), // Màu chữ cho nút thường hoặc bị vô hiệu hóa
               fontSize: MyTextStyle.size_16, // Kích thước chữ
               fontWeight: MyTextStyle.semibold

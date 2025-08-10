@@ -1,9 +1,14 @@
 import 'package:app_ban_sach/core/constants/style.dart';
-import 'package:app_ban_sach/features/ui/screens/user_screen.dart';
+import 'package:app_ban_sach/firebase_cloud/models/user.dart' as UserLocal;
 import 'package:app_ban_sach/features/ui/widgets/appbar.dart';
 import 'package:app_ban_sach/features/ui/widgets/button.dart';
 import 'package:app_ban_sach/features/ui/widgets/text_field.dart';
+import 'package:app_ban_sach/firebase_cloud/service/user_service.dart';
+import 'package:app_ban_sach/main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:app_ban_sach/firebase_cloud/models/user.dart' as User_firebase;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -13,116 +18,143 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _LoginState extends State<RegisterScreen> {
+  //
   final double paddingHorizontal = 5.0;
+  bool isLoading = false;
+  TextEditingController emailController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
+  TextEditingController passController = TextEditingController();
+  TextEditingController passConfirmController = TextEditingController();
+  
+  Future<void> onClickRegister() async {
+    final email = emailController.text.trim();
+    final name = nameController.text.trim();
+    final phone = phoneNumberController.text.trim();
+    final pass = passController.text.trim();
+    final passConfirm = passConfirmController.text.trim();
+    if (email.isEmpty || phone.isEmpty || pass.isEmpty || passConfirm.isEmpty || name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Vui lòng điền đầy đủ thông tin.')),
+      );
+      return;
+    }
+    try {
+      // ✅ Tạo tài khoản với Firebase Auth
+      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passController.text,
+      );
+
+      final user = credential.user;
+      if (user != null) {
+        final userModel = User_firebase.User(
+          uid: user.uid,
+          email: emailController.text,
+          password: passController.text,
+          name: nameController.text,
+          phoneNumber: phoneNumberController.text,
+          birthday: "2000/1/1",
+          gender: 1,
+          role: 'user',
+          avatar: 'assets/default_images/default_avatar.jpg',
+        );
+
+        // ✅ Lưu Firestore.
+        await UserService.saveUser(userModel);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Đăng ký thành công!')),
+        );
+        final pref = await SharedPreferences.getInstance();
+        final userId = pref.setString('userId', email);
+        pref.setBool('isLoggedIn', true);
+        Navigator.push(context, MaterialPageRoute(builder: (_) => MainScreen(isLoggedIn: true, indexPage: 3,userId: userId.toString(),)));
+      }
+      else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('CHưa lưu vào realtime db')),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String msg = "Đăng ký thất bại.";
+      if (e.code == 'email-already-in-use') {
+        msg = "Email đã tồn tại!";
+      }
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+    } finally {
+      setState(() => isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(title: 'Đăng nhập'),
-      body: Container(  
-        color: MyColors.whiteColor,
-        padding: EdgeInsets.symmetric(horizontal: 10.0), // Thay đổi padding ngang
-        child: Container(
-          padding: const EdgeInsets.only(top: 10.0, left: 10.0, right: 10.0), // Thêm padding trên và hai bên
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(height: paddingHorizontal), 
-              // Logo
-              Image.asset(
-                  'assets/logo_offical.png', 
-                  height: 150,
-                  width: 150,
-                ),
-              SizedBox(height: paddingHorizontal),
-              // Nhập sdt
-              MyTextField(
-                labelText: 'Số điện thoại',
-                hintText: 'Nhập số điện thoại',
-                controller: TextEditingController(),
-                isPassword: false,
-              ),
-              // Nhập password
-              MyTextField(
-                labelText: 'Mật khẩu',
-                hintText: 'Nhập mật khẩu',
-                controller: TextEditingController(),
-                isPassword: true,
-              ),
-              // Đăng nhập button
-              MyButton(
-                text: 'Đăng nhập', 
-                isOutlined: false, //nút outline
-                isDisabled: false, // nút bị vô hiêu hóa
-                onPressed: () {
-                  // Xử lý đăng nhập ở đây
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Đăng nhập thành công!')),
-                  );
-                },
-              ),
-              // Quên mật khẩu
-              SizedBox(
-                height: 33,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        // Xử lý quên mật khẩu ở đây
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Chức năng quên mật khẩu chưa được triển khai!')),
-                        );
-                      },
-                      child: const Text(
-                        'Quên mật khẩu?',
-                        style: TextStyle(
-                          color: MyColors.warningColor,
-                          fontSize: MyTextStyle.size_13,),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 37,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Bạn đã có tài khoản chưa? ",
-                      style: TextStyle(
-                        color: MyColors.textColor,
-                        fontSize: MyTextStyle.size_16,
-                        fontWeight: MyTextStyle.semibold
-                      ),
-                    ),
-                    const TextButton(
-                      onPressed: null,
-                      child: Text(
-                        'Đăng ký',
-                        style: TextStyle(
-                          color: MyColors.primaryColor,
-                          fontSize: MyTextStyle.size_16,
-                          fontWeight: MyTextStyle.semibold
+      appBar: MyAppBar(title: 'Đăng ký'),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                color: MyColors.whiteColor,
+                child: IntrinsicHeight(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Center(
+                        child: Image.asset(
+                          'assets/logo_offical.png',
+                          height: 100,
+                          width: 100,
                         ),
                       ),
-                    ),
-                  ],
+                      MyTextField(
+                        labelText: 'Email',
+                        hintText: 'Nhập email',
+                        controller: emailController,
+                        isPassword: false,
+                      ),
+                      MyTextField(
+                        labelText: 'Họ và tên',
+                        hintText: 'Nhập tên',
+                        controller: nameController,
+                        isPassword: false,
+                      ),
+                      MyTextField(
+                        labelText: 'Số điện thoại',
+                        hintText: 'Nhập số điện thoại',
+                        controller: phoneNumberController,
+                        isPassword: false,
+                      ),
+                      MyTextField(
+                        labelText: 'Mật khẩu',
+                        hintText: 'Nhập mật khẩu',
+                        controller: passController,
+                        isPassword: true,
+                      ),
+                      MyTextField(
+                        labelText: 'Xác nhận mật khẩu',
+                        hintText: 'Nhập lại mật khẩu',
+                        controller: passConfirmController,
+                        isPassword: true,
+                      ),
+                      const SizedBox(height: 10),
+                      MyButton(
+                        text: 'Đăng ký tài khoản',
+                        onPressed: onClickRegister,
+                      ),
+                      const Spacer(), // Đẩy nội dung lên nếu dư chiều cao
+                    ],
+                  ),
                 ),
               ),
-              MyButton(text: 'Đăng nhập bằng Google', 
-                imagePath: 'assets/google_logo.jpg', // Đường dẫn hình ảnh
-                isOutlined: true, //nút outline
-                isDisabled: false, // nút bị vô hiêu hóa
-                onPressed: () async {
-                  // Xử lý đăng nhập bằng Google ở đây
-                
-                },
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
+
 }
